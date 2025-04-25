@@ -1,0 +1,81 @@
+:
+# SaGa Frontier2 連携可視化・検索ツール
+
+このプロジェクトは、Neo4j を用いて ゲーム「SaGa Frontier2」 に登場する術・技同士の連携をグラフ構造で管理し、Node.js（TypeScript） + GraphQL + React フロントエンドからそれを操作・可視化するフルスタックアプリケーションです。
+
+---
+
+## 📦 構成
+
+```
+.
+├── backend/                # Node.js + GraphQL サーバ
+│   ├── src/
+│   └── package.json
+├── frontend/               # React + Apollo クライアント
+│   ├── src/
+│   └── package.json
+├── neo4j/                  # Neo4j 用データと初期化スクリプト
+│   ├── init.cypher
+│   └── docker-compose.yml
+└── README.md
+```
+
+---
+
+## 🚀 セットアップ手順
+
+### 1. Neo4j 起動
+
+```bash
+cd neo4j
+docker compose up -d
+```
+
+ブラウザで [http://localhost:7474](http://localhost:7474) にアクセス（認証なし）
+
+---
+
+### 2. 初期データの投入
+
+```bash
+docker exec -i sf2-neo4j cypher-shell -u neo4j -p '' -f /var/lib/neo4j/import/init.cypher
+```
+
+---
+
+### 3. バックエンドのセットアップ
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+GraphQL エンドポイントが [http://localhost:4000/graphql](http://localhost:4000/graphql) に立ち上がります。
+
+---
+
+### 4. フロントエンドのセットアップ
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+ブラウザで [http://localhost:3000](http://localhost:3000) を開くとフロントエンドが確認できます。
+
+---
+
+## 📘 備考
+
+- `init.cypher` にはカテゴリ・術・技・連携関係の全データを記述しています。
+- GraphQL スキーマは `backend/src/schema.ts` に定義されます。
+- データ可視化には `react-force-graph` または `vis-network` の導入を検討中です。
+- 連携のデータは現在は以下ページを参考にしました。感謝申し上げます。
+
+https://web.archive.org/web/20190329052637/http://www.geocities.jp/yama23neko/gamememo/sagafro2/conbi.html
+
+
+---
