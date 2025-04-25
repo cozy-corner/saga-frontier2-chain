@@ -1,0 +1,62 @@
+# Node.js / npm / yarn
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml # pnpm を使う場合
+
+# TypeScript build outputs
+*.js # .ts ファイルと同じ階層にコンパイルする場合
+*.js.map
+*.d.ts # 型定義ファイル (プロジェクトによる)
+# コンパイル先ディレクトリ (tsconfig.json の outDir など)
+# backend と frontend で異なる可能性があるので、共通で build/dist を指定
+build/
+dist/
+.tsbuildinfo
+
+# Vite build output
+frontend/dist/
+frontend/.vite/
+
+# Neo4j Docker runtime data (docker-compose.yml でマウントされる永続データ)
+neo4j/data/databases/
+neo4j/data/transactions/
+neo4j/logs/
+neo4j/plugins/ # もしあれば
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/ 
+*.sublime-project
+*.sublime-workspace
+.zed/ 
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Other
+.npm/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
