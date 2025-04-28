@@ -1,0 +1,4 @@
+language: typescript
+review:
+  enabled: true
+
