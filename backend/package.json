@@ -4,7 +4,8 @@
     "main": "index.ts",
     "scripts": {
         "start": "ts-node src/index.ts",
-        "dev": "nodemon src/index.ts"
+        "dev": "nodemon src/index.ts",
+        "lint": "eslint src --ext .ts"
     },
     "dependencies": {
         "apollo-server": "^3.11.1",
