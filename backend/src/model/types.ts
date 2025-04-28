@@ -4,10 +4,10 @@
 export interface SkillType {
   name: string;
   category?: CategoryType;
-  linksTo?: SkillType[];
+  linksTo: SkillType[];
 }
 
 export interface CategoryType {
   name: string;
-  skills?: SkillType[];
+  skills: SkillType[];
 }
