@@ -1,13 +1,13 @@
 // backend/src/model/types.ts
 
 // Define interfaces that will be implemented by the classes
-export interface ISkill {
+export interface SkillType {
   name: string;
-  category?: ICategory;
-  linksTo?: ISkill[];
+  category?: CategoryType;
+  linksTo?: SkillType[];
 }
 
-export interface ICategory {
+export interface CategoryType {
   name: string;
-  skills?: ISkill[];
+  skills?: SkillType[];
 }
