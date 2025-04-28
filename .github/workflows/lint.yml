@@ -25,4 +25,5 @@ jobs:
 
       - name: Run ESLint
         working-directory: backend
-        run: npx eslint src
+        run: npx eslint src --ext .ts --config ../.eslintrc.json --resolve-plugins-relative-to ./node_modules
+
