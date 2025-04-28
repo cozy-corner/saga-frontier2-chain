@@ -1,4 +1,4 @@
-{
+  {
     "root": true,
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"],
@@ -13,17 +13,11 @@
     },
     "overrides": [
       {
-        "files": ["backend/**/*.ts"],
+        "files": ["**/*.ts"],
         "parserOptions": {
-          "project": "./backend/tsconfig.json"
-        }
-      },
-      {
-        "files": ["frontend/**/*.ts", "frontend/**/*.tsx"],
-        "parserOptions": {
-          "project": "./frontend/tsconfig.json"
+          "project": "./tsconfig.json"
         }
       }
     ]
   }
-  
+   
