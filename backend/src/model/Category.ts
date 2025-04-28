@@ -1,11 +1,11 @@
 // backend/src/model/Category.ts
-import { ICategory, ISkill } from './types';
+import { CategoryType, SkillType } from './types';
 
-export class Category implements ICategory {
+export class Category implements CategoryType {
   name: string;
-  skills?: ISkill[];
+  skills: SkillType[];
 
-  constructor(name: string, skills?: ISkill[]) {
+  constructor(name: string, skills: SkillType[] = []) {
     this.name = name;
     this.skills = skills;
   }
