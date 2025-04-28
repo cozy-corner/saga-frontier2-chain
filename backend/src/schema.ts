@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server';
+import { CategoryType, SkillType } from './model/types';
 // Import repository functions instead of neo4j driver directly
 import {
   findAllCategories,
@@ -47,11 +48,11 @@ export const resolvers = {
   Query: {
     // Use repository functions for data fetching
     categories: async () => findAllCategories(),
-    category: async (_: any, { name }: { name: string }) => findCategoryByName(name),
-    skills: async (_: any, { categoryName }: { categoryName?: string }) => findSkills(categoryName),
-    skill: async (_: any, { name }: { name: string }) => findSkillByName(name),
-    linkedFromCategories: async (_: any, { skillName }: { skillName: string }) => findLinkedFromCategories(skillName),
-    linkedToCategories: async (_: any, { skillName }: { skillName: string }) => findLinkedToCategories(skillName),
+    category: async (_: unknown, { name }: { name: string }) => findCategoryByName(name),
+    skills: async (_: unknown, { categoryName }: { categoryName?: string }) => findSkills(categoryName),
+    skill: async (_: unknown, { name }: { name: string }) => findSkillByName(name),
+    linkedFromCategories: async (_: unknown, { skillName }: { skillName: string }) => findLinkedFromCategories(skillName),
+    linkedToCategories: async (_: unknown, { skillName }: { skillName: string }) => findLinkedToCategories(skillName),
   },
   // Resolvers for nested fields within Types, calling repository functions
   Skill: {
