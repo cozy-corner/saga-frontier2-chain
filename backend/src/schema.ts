@@ -1,5 +1,4 @@
 import { gql } from 'apollo-server';
-import { CategoryType, SkillType } from './model/types';
 // Import repository functions instead of neo4j driver directly
 import {
   findAllCategories,

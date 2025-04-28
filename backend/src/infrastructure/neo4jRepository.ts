@@ -71,9 +71,8 @@ const extractNodeProps = (record: Neo4jRecord | null | undefined, alias: string)
     try {
         const node = record.get(alias);
         return node ? node.properties : null;
-    } catch (_error) {
-        // Log error if needed, e.g., alias not found
-        // console.error(`Error extracting properties for alias ${alias}:`, error);
+    } catch (error) {
+        console.error(`Error extracting properties for alias ${alias}:`, error);
         return null;
     }
 };
