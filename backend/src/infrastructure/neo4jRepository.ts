@@ -1,4 +1,5 @@
-import neo4j, { Driver, Session, Record as Neo4jRecord } from 'neo4j-driver';
+import neo4j, { Driver, Record as Neo4jRecord } from 'neo4j-driver';
+import { SkillType, CategoryType } from '../model/types';
 
 // --- Neo4j Driver Setup ---
 
@@ -47,12 +48,30 @@ export const closeDriver = async (): Promise<void> => {
  * @param alias - The alias used for the node in the Cypher query (e.g., 'c', 's').
  * @returns The node's properties object or null if the node/record is null.
  */
-const extractNodeProps = (record: Neo4jRecord | null | undefined, alias: string): any | null => {
+// Helper to convert raw data to CategoryType
+const toCategoryType = (data: Record<string, unknown> | null): CategoryType | null => {
+  if (!data) return null;
+  return { 
+    name: data.name as string, 
+    skills: [] 
+  };
+};
+
+// Helper to convert raw data to SkillType
+const toSkillType = (data: Record<string, unknown> | null): SkillType | null => {
+  if (!data) return null;
+  return { 
+    name: data.name as string, 
+    linksTo: [] 
+  };
+};
+
+const extractNodeProps = (record: Neo4jRecord | null | undefined, alias: string): Record<string, unknown> | null => {
     if (!record) return null;
     try {
         const node = record.get(alias);
         return node ? node.properties : null;
-    } catch (error) {
+    } catch (_error) {
         // Log error if needed, e.g., alias not found
         // console.error(`Error extracting properties for alias ${alias}:`, error);
         return null;
@@ -66,7 +85,7 @@ const extractNodeProps = (record: Neo4jRecord | null | undefined, alias: string)
  * @param alias - The alias used for the node in the Cypher query.
  * @returns An array of node properties objects.
  */
-const extractNodePropsList = (records: Neo4jRecord[], alias: string): any[] => {
+const extractNodePropsList = (records: Neo4jRecord[], alias: string): Record<string, unknown>[] => {
     return records.map(record => extractNodeProps(record, alias)).filter(props => props !== null);
 };
 
@@ -76,12 +95,13 @@ const extractNodePropsList = (records: Neo4jRecord[], alias: string): any[] => {
 /**
  * Fetches all Category nodes.
  */
-export const findAllCategories = async (): Promise<any[]> => {
+export const findAllCategories = async (): Promise<CategoryType[]> => {
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
     const result = await session.run('MATCH (c:Category) RETURN c ORDER BY c.name');
-    return extractNodePropsList(result.records, 'c');
+    const rawData = extractNodePropsList(result.records, 'c');
+    return rawData.map(data => toCategoryType(data)).filter((cat): cat is CategoryType => cat !== null);
   } finally {
     await session.close();
   }
@@ -90,12 +110,13 @@ export const findAllCategories = async (): Promise<any[]> => {
 /**
  * Fetches a specific Category node by name.
  */
-export const findCategoryByName = async (name: string): Promise<any | null> => {
+export const findCategoryByName = async (name: string): Promise<CategoryType | null> => {
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
     const result = await session.run('MATCH (c:Category {name: $name}) RETURN c', { name });
-    return extractNodeProps(result.records[0], 'c'); // Returns null if not found
+    const rawData = extractNodeProps(result.records[0], 'c');
+    return toCategoryType(rawData);
   } finally {
     await session.close();
   }
@@ -104,7 +125,7 @@ export const findCategoryByName = async (name: string): Promise<any | null> => {
 /**
  * Fetches Skill nodes, optionally filtered by category name.
  */
-export const findSkills = async (categoryName?: string): Promise<any[]> => {
+export const findSkills = async (categoryName?: string): Promise<SkillType[]> => {
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
@@ -124,7 +145,8 @@ export const findSkills = async (categoryName?: string): Promise<any[]> => {
     }
 
     const result = await session.run(query, params);
-    return extractNodePropsList(result.records, 's');
+    const rawData = extractNodePropsList(result.records, 's');
+    return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
   } finally {
     await session.close();
   }
@@ -133,12 +155,13 @@ export const findSkills = async (categoryName?: string): Promise<any[]> => {
 /**
  * Fetches a specific Skill node by name.
  */
-export const findSkillByName = async (name: string): Promise<any | null> => {
+export const findSkillByName = async (name: string): Promise<SkillType | null> => {
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
     const result = await session.run('MATCH (s:Skill {name: $name}) RETURN s', { name });
-    return extractNodeProps(result.records[0], 's'); // Returns null if not found
+    const rawData = extractNodeProps(result.records[0], 's');
+    return toSkillType(rawData);
   } finally {
     await session.close();
   }
@@ -147,7 +170,7 @@ export const findSkillByName = async (name: string): Promise<any | null> => {
 /**
  * Fetches the Category a specific Skill belongs to.
  */
-export const findCategoryForSkill = async (skillName: string): Promise<any | null> => {
+export const findCategoryForSkill = async (skillName: string): Promise<CategoryType | null> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
@@ -155,7 +178,8 @@ export const findCategoryForSkill = async (skillName: string): Promise<any | nul
         'MATCH (s:Skill {name: $skillName})-[:BELONGS_TO]->(c:Category) RETURN c',
         { skillName }
       );
-      return extractNodeProps(result.records[0], 'c');
+      const rawData = extractNodeProps(result.records[0], 'c');
+      return toCategoryType(rawData);
     } finally {
       await session.close();
     }
@@ -164,7 +188,7 @@ export const findCategoryForSkill = async (skillName: string): Promise<any | nul
 /**
  * Fetches Skills that a specific Skill links to.
  */
-export const findSkillsLinkedFrom = async (skillName: string): Promise<any[]> => {
+export const findSkillsLinkedFrom = async (skillName: string): Promise<SkillType[]> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
@@ -172,7 +196,8 @@ export const findSkillsLinkedFrom = async (skillName: string): Promise<any[]> =>
         'MATCH (s:Skill {name: $skillName})-[:LINKS_TO]->(linked:Skill) RETURN linked ORDER BY linked.name',
         { skillName }
       );
-      return extractNodePropsList(result.records, 'linked');
+      const rawData = extractNodePropsList(result.records, 'linked');
+      return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
     } finally {
       await session.close();
     }
@@ -181,7 +206,7 @@ export const findSkillsLinkedFrom = async (skillName: string): Promise<any[]> =>
 /**
  * Fetches Skills that link to a specific Skill.
  */
-export const findSkillsLinkedTo = async (skillName: string): Promise<any[]> => {
+export const findSkillsLinkedTo = async (skillName: string): Promise<SkillType[]> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
@@ -189,7 +214,8 @@ export const findSkillsLinkedTo = async (skillName: string): Promise<any[]> => {
         'MATCH (s:Skill {name: $skillName})<-[:LINKS_TO]-(linker:Skill) RETURN linker ORDER BY linker.name',
         { skillName }
       );
-      return extractNodePropsList(result.records, 'linker');
+      const rawData = extractNodePropsList(result.records, 'linker');
+      return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
     } finally {
       await session.close();
     }
@@ -198,7 +224,7 @@ export const findSkillsLinkedTo = async (skillName: string): Promise<any[]> => {
 /**
  * Fetches Skills belonging to a specific Category.
  */
-export const findSkillsForCategory = async (categoryName: string): Promise<any[]> => {
+export const findSkillsForCategory = async (categoryName: string): Promise<SkillType[]> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
@@ -206,7 +232,8 @@ export const findSkillsForCategory = async (categoryName: string): Promise<any[]
             'MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) RETURN s ORDER BY s.name',
             { categoryName }
         );
-        return extractNodePropsList(result.records, 's');
+        const rawData = extractNodePropsList(result.records, 's');
+        return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
     } finally {
         await session.close();
     }
@@ -215,7 +242,7 @@ export const findSkillsForCategory = async (categoryName: string): Promise<any[]
 /**
  * Fetches distinct Categories of Skills linked *from* a specific Skill.
  */
-export const findLinkedFromCategories = async (skillName: string): Promise<any[]> => {
+export const findLinkedFromCategories = async (skillName: string): Promise<CategoryType[]> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
@@ -224,7 +251,8 @@ export const findLinkedFromCategories = async (skillName: string): Promise<any[]
              RETURN DISTINCT c ORDER BY c.name`,
             { skillName }
         );
-        return extractNodePropsList(result.records, 'c');
+        const rawData = extractNodePropsList(result.records, 'c');
+        return rawData.map(data => toCategoryType(data)).filter((cat): cat is CategoryType => cat !== null);
     } finally {
         await session.close();
     }
@@ -233,7 +261,7 @@ export const findLinkedFromCategories = async (skillName: string): Promise<any[]
 /**
  * Fetches distinct Categories of Skills linked *to* a specific Skill.
  */
-export const findLinkedToCategories = async (skillName: string): Promise<any[]> => {
+export const findLinkedToCategories = async (skillName: string): Promise<CategoryType[]> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
@@ -242,7 +270,8 @@ export const findLinkedToCategories = async (skillName: string): Promise<any[]> 
              RETURN DISTINCT c ORDER BY c.name`,
             { skillName }
         );
-        return extractNodePropsList(result.records, 'c');
+        const rawData = extractNodePropsList(result.records, 'c');
+        return rawData.map(data => toCategoryType(data)).filter((cat): cat is CategoryType => cat !== null);
     } finally {
         await session.close();
     }
