@@ -1,3 +1,4 @@
 - [x] create models like a Skill.
 - [] select category then line up candidate Skills.
 - [] select skill then line up candidate Category.
+- [] Consider moving connection details to environment variables for security and flexibility
