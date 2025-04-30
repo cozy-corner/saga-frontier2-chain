@@ -24,7 +24,7 @@ describe('Neo4j Repository', () => {
     });
     
     test('findCategoryByName returns the correct category', async () => {
-      const categoryName = '剣'; // Sword category
+      const categoryName = '剣';
       const category = await repository.findCategoryByName(categoryName);
       
       expect(category).not.toBeNull();
