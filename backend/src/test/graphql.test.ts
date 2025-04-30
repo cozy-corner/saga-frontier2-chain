@@ -1,6 +1,7 @@
 // backend/src/test/graphql.test.ts
 import { ApolloServer } from 'apollo-server';
 import { typeDefs, resolvers } from '../schema';
+import { CategoryType, SkillType } from '../model/types';
 import { testCategories, testSkills, testLinkage } from './setup/testData';
 import { setupRepositoryMocks, resetRepositoryMocks } from './mock/repositoryMock';
 
@@ -39,7 +40,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.categories).toHaveLength(testCategories.length);
       
-      const categoryNames = result.data?.categories.map((c: any) => c.name);
+      const categoryNames = result.data?.categories.map((c: CategoryType) => c.name);
       expect(categoryNames).toEqual(expect.arrayContaining(testCategories.map(c => c.name)));
     });
     
@@ -78,7 +79,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.skills).toHaveLength(testSkills.length);
       
-      const skillNames = result.data?.skills.map((s: any) => s.name);
+      const skillNames = result.data?.skills.map((s: SkillType) => s.name);
       expect(skillNames).toEqual(expect.arrayContaining(testSkills.map(s => s.name)));
     });
     
@@ -102,7 +103,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.skills).toHaveLength(expectedSkills.length);
       
-      const skillNames = result.data?.skills.map((s: any) => s.name);
+      const skillNames = result.data?.skills.map((s: SkillType) => s.name);
       expect(skillNames).toEqual(expect.arrayContaining(expectedSkills.map(s => s.name)));
     });
     
@@ -159,7 +160,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.linkedFromCategories).toHaveLength(expectedCategories.length);
       
-      const categoryNames = result.data?.linkedFromCategories.map((c: any) => c.name);
+      const categoryNames = result.data?.linkedFromCategories.map((c: CategoryType) => c.name);
       expect(categoryNames).toEqual(expect.arrayContaining(expectedCategories));
     });
   });
@@ -215,7 +216,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.skill.linksTo).toHaveLength(expectedLinks.length);
       
-      const linkedSkillNames = result.data?.skill.linksTo.map((s: any) => s.name);
+      const linkedSkillNames = result.data?.skill.linksTo.map((s: SkillType) => s.name);
       expect(linkedSkillNames).toEqual(expect.arrayContaining(expectedLinks));
     });
     
@@ -244,7 +245,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.skill.linkedBy).toHaveLength(expectedLinks.length);
       
-      const linkedSkillNames = result.data?.skill.linkedBy.map((s: any) => s.name);
+      const linkedSkillNames = result.data?.skill.linkedBy.map((s: SkillType) => s.name);
       expect(linkedSkillNames).toEqual(expect.arrayContaining(expectedLinks));
     });
     
@@ -271,7 +272,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.category.skills).toHaveLength(expectedSkills.length);
       
-      const skillNames = result.data?.category.skills.map((s: any) => s.name);
+      const skillNames = result.data?.category.skills.map((s: SkillType) => s.name);
       expect(skillNames).toEqual(expect.arrayContaining(expectedSkills.map(s => s.name)));
     });
   });
@@ -316,12 +317,12 @@ describe('GraphQL Schema', () => {
       
       // Filter linked skills by the requested category
       const linkedSkills = result.data?.skill.linksTo.filter(
-        (skill: any) => skill.category?.name === categoryName
+        (skill: SkillType) => skill.category?.name === categoryName
       );
       
       expect(linkedSkills).toHaveLength(expectedLinkedSkills.length);
       
-      const linkedSkillNames = linkedSkills.map((s: any) => s.name);
+      const linkedSkillNames = linkedSkills.map((s: SkillType) => s.name);
       expect(linkedSkillNames).toEqual(expect.arrayContaining(expectedLinkedSkills));
     });
   });

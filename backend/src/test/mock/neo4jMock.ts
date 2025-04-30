@@ -1,11 +1,19 @@
 // backend/src/test/mock/neo4jMock.ts
-import neo4j from 'neo4j-driver';
+import neo4j, { Driver } from 'neo4j-driver';
 import { testCategories, testSkills, testLinkage } from '../setup/testData';
+
+// Define types for Neo4j mocks
+type Neo4jNodeProperty = string | number | boolean | null | undefined;
+type Neo4jNodeProperties = Record<string, Neo4jNodeProperty>;
+type Neo4jQueryParams = Record<string, string | number | boolean | null>;
+type MockRecord = {
+  get: jest.Mock;
+};
 
 /**
  * Helper to create a Neo4j record with node properties
  */
-const createMockRecord = (alias: string, properties: Record<string, any>): any => {
+const createMockRecord = (alias: string, properties: Neo4jNodeProperties): MockRecord => {
   return {
     get: jest.fn((key) => {
       if (key === alias) {
@@ -22,7 +30,7 @@ const createMockRecord = (alias: string, properties: Record<string, any>): any =
  * Create a unified mock implementation for Neo4j queries
  */
 const createQueryHandler = () => {
-  return jest.fn((query: string, params: any = {}) => {
+  return jest.fn((query: string, params: Neo4jQueryParams = {}) => {
     // Category queries
     if (query.includes('MATCH (c:Category)') && !query.includes('WHERE')) {
       // findAllCategories
@@ -196,7 +204,7 @@ export function setupNeo4jMock() {
   };
   
   // Mock the neo4j.driver factory function
-  jest.spyOn(neo4j, 'driver').mockReturnValue(mockDriver as any);
+  jest.spyOn(neo4j, 'driver').mockReturnValue(mockDriver as unknown as Driver);
   
   return {
     driver: mockDriver,
