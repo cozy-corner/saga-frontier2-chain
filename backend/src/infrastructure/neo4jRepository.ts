@@ -53,7 +53,8 @@ const toCategoryType = (data: Record<string, unknown> | null): CategoryType | nu
   if (!data) return null;
   return { 
     name: data.name as string, 
-    skills: [] 
+    skills: [] // NOTE: Empty array is intentional. Skills are loaded on-demand by the GraphQL resolver
+               // in schema.ts (Category.skills resolver) rather than eagerly loaded here.
   };
 };
 
@@ -62,7 +63,8 @@ const toSkillType = (data: Record<string, unknown> | null): SkillType | null => 
   if (!data) return null;
   return { 
     name: data.name as string, 
-    linksTo: [] 
+    linksTo: [] // NOTE: Empty array is intentional. LinkTo relationships are loaded on-demand
+               // by the GraphQL resolver in schema.ts (Skill.linksTo resolver) rather than eagerly loaded here.
   };
 };
 
