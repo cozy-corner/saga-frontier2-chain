@@ -1,5 +1,5 @@
 // backend/src/test/setup/testData.ts
-import { CategoryType, SkillType } from '../../model/types';
+import { CategoryType } from '../../model/types';
 
 /**
  * Test data for categories

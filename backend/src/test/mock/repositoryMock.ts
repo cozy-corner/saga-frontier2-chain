@@ -2,6 +2,7 @@
 import * as repository from '../../infrastructure/neo4jRepository';
 import { CategoryType, SkillType } from '../../model/types';
 import { testCategories, testSkills, testLinkage } from '../setup/testData';
+import { Driver } from 'neo4j-driver';
 
 /**
  * Setup complete mocks for all repository functions
@@ -113,7 +114,7 @@ export function setupRepositoryMocks() {
 
   // Leave getDriver mocked as a no-op since we're bypassing it
   jest.spyOn(repository, 'getDriver').mockImplementation(() => {
-    return {} as any;
+    return {} as Driver;
   });
 }
 

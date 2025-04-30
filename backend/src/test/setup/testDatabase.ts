@@ -1,15 +1,32 @@
 // backend/src/test/setup/testDatabase.ts
-import neo4j from 'neo4j-driver';
+import neo4j, { Driver } from 'neo4j-driver';
 import { testCategories, testSkills, testLinkage } from './testData';
 
+// Define types for Neo4j mocks
+type Neo4jNodeProperty = string | number | boolean | null | undefined;
+type Neo4jNodeProperties = Record<string, Neo4jNodeProperty>;
+type Neo4jQueryParams = Record<string, string | number | boolean | null>;
+type MockSession = {
+  run: jest.Mock;
+  close: jest.Mock;
+};
+type MockDriver = {
+  session: jest.Mock;
+  verifyConnectivity: jest.Mock;
+  close: jest.Mock;
+};
+type MockRecord = {
+  get: jest.Mock;
+};
+
 // Mock implementation of Neo4j driver and session
-let mockDriver: any;
-let mockSession: any;
+let mockDriver: MockDriver;
+let mockSession: MockSession;
 
 /**
  * Initialize mock Neo4j driver for testing
  */
-export const initTestDriver = (): any => {
+export const initTestDriver = (): MockDriver => {
   // Reset mock responses for each test
   mockSession = {
     run: jest.fn(),
@@ -23,7 +40,7 @@ export const initTestDriver = (): any => {
   };
 
   // Spy on neo4j.driver to return our mock
-  jest.spyOn(neo4j, 'driver').mockReturnValue(mockDriver);
+  jest.spyOn(neo4j, 'driver').mockReturnValue(mockDriver as unknown as Driver);
 
   return mockDriver;
 };
@@ -31,7 +48,7 @@ export const initTestDriver = (): any => {
 /**
  * Helper to create a Neo4j record with node properties
  */
-const createMockRecord = (alias: string, properties: Record<string, any>): any => {
+const createMockRecord = (alias: string, properties: Neo4jNodeProperties): MockRecord => {
   return {
     get: jest.fn((key) => {
       if (key === alias) {
@@ -49,7 +66,7 @@ const createMockRecord = (alias: string, properties: Record<string, any>): any =
  */
 export const setupAllMocks = (): void => {
   // Universal mock for neo4j session.run that handles all queries based on patterns
-  mockSession.run.mockImplementation((query: string, params: any = {}) => {
+  mockSession.run.mockImplementation((query: string, params: Neo4jQueryParams = {}) => {
     // Category queries
     if (query.includes('MATCH (c:Category)') && !query.includes('WHERE')) {
       // findAllCategories
