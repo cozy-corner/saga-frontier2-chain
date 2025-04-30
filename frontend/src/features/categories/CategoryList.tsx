@@ -13,7 +13,16 @@ export function CategoryList({ onSelectCategory, selectedCategory }: CategoryLis
   const { loading, error, categories } = useCategories();
   
   if (loading) return <LoadingIndicator />;
-  if (error) return <ErrorMessage message={error.message} />;
+  if (error) {
+    const message =
+      Array.isArray((error as any).graphQLErrors) && error.graphQLErrors.length
+        ? error.graphQLErrors.map(e => e.message).join(', ')
+        : error.message ?? 'Unexpected error';
+    return <ErrorMessage message={message} />;
+  }
+
+  // ...rest of your component
+}
   
   if (categories.length === 0) {
     return <p>カテゴリがありません</p>;
