@@ -1,4 +1,6 @@
 - [x] create models like a Skill.
 - [x] select category then line up candidate Skills.
 - [x] select skill then line up candidate Category.
+- [x] backend test
+- [x] run test on ci
 - [] Consider moving connection details to environment variables for security and flexibility
