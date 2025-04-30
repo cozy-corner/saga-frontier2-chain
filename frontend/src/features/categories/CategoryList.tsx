@@ -1,4 +1,5 @@
 import React from 'react';
+import { ApolloError } from '@apollo/client';
 import { useCategories } from '../../api/hooks/useCategories';
 import { LoadingIndicator } from '../../components/common/LoadingIndicator';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
@@ -15,14 +16,11 @@ export function CategoryList({ onSelectCategory, selectedCategory }: CategoryLis
   if (loading) return <LoadingIndicator />;
   if (error) {
     const message =
-      Array.isArray((error as any).graphQLErrors) && error.graphQLErrors.length
+      Array.isArray((error as ApolloError).graphQLErrors) && error.graphQLErrors.length
         ? error.graphQLErrors.map(e => e.message).join(', ')
         : error.message ?? 'Unexpected error';
     return <ErrorMessage message={message} />;
   }
-
-  // ...rest of your component
-}
   
   if (categories.length === 0) {
     return <p>カテゴリがありません</p>;
