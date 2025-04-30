@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { GET_SKILLS_BY_CATEGORY } from '../graphql/queries';
-import { Skill, CategoryQueryResult } from '../types';
+import { CategoryQueryResult } from '../types';
 
 export function useSkillsByCategory(categoryName: string | null) {
   const { loading, error, data } = useQuery<CategoryQueryResult>(
