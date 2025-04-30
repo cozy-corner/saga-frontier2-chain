@@ -28,6 +28,11 @@ const createMockRecord = (alias: string, properties: Neo4jNodeProperties): MockR
 
 /**
  * Create a unified mock implementation for Neo4j queries
+ * Query handler that matches Cypher queries by string patterns.
+ * 
+ * WARNING: This implementation is sensitive to query format changes.
+ * If database queries are modified in the repository layer, update the
+ * corresponding patterns here to ensure tests continue to work.
  */
 const createQueryHandler = () => {
   return jest.fn((query: string, params: Neo4jQueryParams = {}) => {
