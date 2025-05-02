@@ -40,6 +40,8 @@ export const typeDefs = gql`
     linkedFromCategories(skillName: String!): [Category!]!
     # Get distinct categories of skills linked *to* a specific skill
     linkedToCategories(skillName: String!): [Category!]!
+    # Get all skills linked from a specific skill (without category filtering)
+    linkedSkills(skillName: String!): [Skill!]!
   }
 `;
 
@@ -52,6 +54,11 @@ export const resolvers = {
     skill: async (_: unknown, { name }: { name: string }) => findSkillByName(name),
     linkedFromCategories: async (_: unknown, { skillName }: { skillName: string }) => findLinkedFromCategories(skillName),
     linkedToCategories: async (_: unknown, { skillName }: { skillName: string }) => findLinkedToCategories(skillName),
+    linkedSkills: async (_: unknown, { skillName }: { skillName: string }) => {
+      const skill = await findSkillByName(skillName);
+      if (!skill) return [];
+      return findSkillsLinkedFrom(skillName);
+    },
   },
   // Resolvers for nested fields within Types, calling repository functions
   Skill: {
