@@ -163,6 +163,37 @@ describe('GraphQL Schema', () => {
       const categoryNames = result.data?.linkedFromCategories.map((c: CategoryType) => c.name);
       expect(categoryNames).toEqual(expect.arrayContaining(expectedCategories));
     });
+    
+    test('linkedSkills query returns all skills linked from a skill (without category filtering)', async () => {
+      const skillName = '裏拳';
+      
+      // Find all skills linked from '裏拳'
+      const expectedLinkedSkills = testLinkage
+        .filter(link => link.sourceSkill === skillName)
+        .map(link => link.targetSkill);
+      
+      const query = `
+        query GetAllLinkedSkills($skillName: String!) {
+          linkedSkills(skillName: $skillName) {
+            name
+            category {
+              name
+            }
+          }
+        }
+      `;
+      
+      const result = await server.executeOperation({
+        query,
+        variables: { skillName },
+      });
+      
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.linkedSkills).toHaveLength(expectedLinkedSkills.length);
+      
+      const linkedSkillNames = result.data?.linkedSkills.map((s: SkillType) => s.name);
+      expect(linkedSkillNames).toEqual(expect.arrayContaining(expectedLinkedSkills));
+    });
   });
   
   describe('Nested resolvers', () => {
