@@ -382,6 +382,16 @@ const styles = `
   .category-checkbox-item {
     width: 50%; /* スマホでは2列表示 */
   }
+  
+  .skill-visualization-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .skill-search {
+    width: 100%;
+    margin-top: 10px;
+  }
 }
 
 .legend, .interaction-help {
