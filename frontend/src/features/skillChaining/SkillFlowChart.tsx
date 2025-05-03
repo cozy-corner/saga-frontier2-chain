@@ -7,20 +7,27 @@ import ReactFlow, {
   Background,
   useNodesState,
   useEdgesState,
-  addEdge,
   MiniMap,
   NodeMouseHandler,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { useChain } from './ChainContext';
 import { useLinkedSkills } from '../../api/hooks/useLinkedSkills';
 import { LoadingIndicator } from '../../components/common/LoadingIndicator';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
 import './SkillFlowChart.css';
 
-export function SkillFlowChart({ skillName }: { skillName: string }) {
-  const { state, dispatch } = useChain();
-  const { linkedSkills, loading, error } = useLinkedSkills(skillName, state.selectedCategory);
+interface SkillFlowChartProps {
+  skillName: string;
+  categoryName?: string | null;
+  onSkillSelect?: (skillName: string) => void;
+}
+
+export function SkillFlowChart({ 
+  skillName, 
+  categoryName = null, 
+  onSkillSelect 
+}: SkillFlowChartProps) {
+  const { linkedSkills, loading, error } = useLinkedSkills(skillName, categoryName);
   
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -29,7 +36,7 @@ export function SkillFlowChart({ skillName }: { skillName: string }) {
     // スキルデータからノードとエッジを生成
   useEffect(() => {
     console.log('スキル名:', skillName);
-    console.log('選択カテゴリ:', state.selectedCategory);
+    console.log('選択カテゴリ:', categoryName);
     console.log('連携スキルデータ:', JSON.stringify(linkedSkills, null, 2));
     console.log('ローディング状態:', loading);
     console.log('エラー状態:', error?.message);
@@ -125,14 +132,14 @@ export function SkillFlowChart({ skillName }: { skillName: string }) {
       const y = 250 + radius * Math.sin(angle);
       
       // カテゴリーに基づいて色を設定
-      const categoryName = skill.category?.name || '';
+      const skillCategoryName = skill.category?.name || '';
       const categoryColorKey = Object.keys(categoryColors).find(key => 
-        categoryName.toLowerCase().includes(key.toLowerCase())
+        skillCategoryName.toLowerCase().includes(key.toLowerCase())
       ) || 'default';
       
       const colors = categoryColors[categoryColorKey] || categoryColors.default;
       
-      console.log(`スキル "${skill.name}" のカテゴリ: ${categoryName}, 色: ${colors.bg}`);
+      console.log(`スキル "${skill.name}" のカテゴリ: ${skillCategoryName}, 色: ${colors.bg}`);
       
       // スキル名が一意であることを確認
       const uniqueId = `${skill.name}-${index}`;
@@ -141,7 +148,7 @@ export function SkillFlowChart({ skillName }: { skillName: string }) {
         id: uniqueId,
         data: { 
           label: skill.name,
-          category: categoryName
+          category: skillCategoryName
         },
         position: { x, y },
         style: { 
@@ -168,7 +175,7 @@ export function SkillFlowChart({ skillName }: { skillName: string }) {
     setNodes(newNodes);
     setEdges(newEdges);
     setHighlightedNodes([skillName]); // 初期状態では中心ノードのみハイライト
-  }, [skillName, linkedSkills, loading, setNodes, setEdges]);
+  }, [skillName, linkedSkills, loading, setNodes, setEdges, categoryName, error?.message]);
   
   // ノードホバー時のハイライト処理
   const onNodeMouseEnter: NodeMouseHandler = useCallback((_, node) => {
@@ -245,17 +252,19 @@ export function SkillFlowChart({ skillName }: { skillName: string }) {
   const onNodeClick: NodeMouseHandler = useCallback((_, node) => {
     try {
       // ノードデータからスキル名を取得（IDからではなく）
-      const skillName = node.data?.label;
-      if (typeof skillName === 'string') {
-        console.log(`スキル選択: ${skillName}`);
-        dispatch({ type: 'SELECT_SKILL', payload: { name: skillName } });
+      const clickedSkillName = node.data?.label;
+      if (typeof clickedSkillName === 'string') {
+        console.log(`スキル選択: ${clickedSkillName}`);
+        if (onSkillSelect) {
+          onSkillSelect(clickedSkillName);
+        }
       } else {
         console.warn('無効なスキル名でクリックされました:', node);
       }
     } catch (error) {
       console.error('ノードクリック処理でエラーが発生しました:', error);
     }
-  }, [dispatch]);
+  }, [onSkillSelect]);
   
   if (loading) return <div className="loading-container"><LoadingIndicator /></div>;
   if (error) return <div className="error-container"><ErrorMessage message={error?.message || 'エラーが発生しました'} /></div>;

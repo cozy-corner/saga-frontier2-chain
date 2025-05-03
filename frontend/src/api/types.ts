@@ -30,7 +30,11 @@ export interface LinkedFromCategoriesQueryResult {
   linkedFromCategories: Category[];
 }
 
-export interface LinkedSkillsQueryResult {
+export interface LinkedSkillsByCategoryQueryResult {
   skill: Skill;
   category: Category;
+}
+
+export interface LinkedSkillsQueryResult {
+  linkedSkills: Skill[];
 }

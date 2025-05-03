@@ -1,75 +1,59 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { SkillFlowChart } from './SkillFlowChart';
-import { useChain } from './ChainContext';
+import { useGraphVisualization } from './GraphVisualizationContext';
 import { SmartSearch } from './SmartSearch';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
 import { LoadingIndicator } from '../../components/common/LoadingIndicator';
-import { Skill, Category } from '../../api/types';
 import { useCategories } from '../../api/hooks/useCategories';
-import { useSkillsByCategory } from '../../api/hooks/useSkillsByCategory';
+import { useAllSkills } from '../../api/hooks/useAllSkills';
 
 export function SkillChainVisualization() {
-  const { state, dispatch } = useChain();
-  const { selectedSkill, selectedCategory } = state;
-  const [allSkills, setAllSkills] = useState<{ name: string, category?: string }[]>([]);
+  const { state: graphState, setGraphSkill } = useGraphVisualization();
+  const { graphSkill } = graphState;
+  const [selectedCategory] = useState<string | null>(null);
   
   // 全カテゴリを取得
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   
-  // カテゴリが選択されている場合、そのカテゴリのスキルを取得
-  const { skills: categorySkills, loading: skillsLoading, error: skillsError } = useSkillsByCategory(selectedCategory);
+  // 全スキルを取得
+  const { allSkills, loading: allSkillsLoading, error: allSkillsError } = useAllSkills();
   
-  // カテゴリとスキルの読み込み中かどうかを判定
-  const isLoading = categoriesLoading || skillsLoading;
-  
-  // エラーメッセージを生成
-  const errorMessage = categoriesError?.message || skillsError?.message;
+  // 読み込み状態とエラー状態の管理
+  const isLoading = categoriesLoading || allSkillsLoading;
+  const errorMessage = categoriesError?.message || allSkillsError?.message;
   
   // 利用可能なカテゴリのリストをmemoize
   const availableCategories = useMemo(() => {
     return categories.map(category => category.name);
   }, [categories]);
   
-  // カテゴリごとのスキルを取得してallSkillsにマージ
-  useEffect(() => {
-    console.log('カテゴリデータ:', categories);
-    
-    if (categories.length === 0 || categoriesLoading) return;
-    
-    // カテゴリごとのスキルをフラットなリストに変換
-    const skillsList = categories.flatMap(category => {
-      // カテゴリの名前を確認
-      if (!category || !category.name) {
-        console.warn('無効なカテゴリデータ:', category);
-        return [];
-      }
-      
-      // スキルリストの確認
-      if (!category.skills || !Array.isArray(category.skills)) {
-        console.warn(`${category.name}のスキルがありません`);
-        return [];
-      }
-      
-      // スキルデータをフォーマット
-      return category.skills.map(skill => ({
-        name: skill.name,
-        category: category.name
-      }));
-    });
-    
-    console.log('全スキルデータ:', skillsList);
-    setAllSkills(skillsList);
-  }, [categories, categoriesLoading]);
-  
   // スキル選択ハンドラー
   const handleSelectSkill = (skillName: string) => {
-    dispatch({ type: 'SELECT_SKILL', payload: { name: skillName } });
+    setGraphSkill(skillName);
   };
+  
+  // エラーがある場合はエラーメッセージを表示
+  if (errorMessage) {
+    return (
+      <div className="error-container">
+        <ErrorMessage message={errorMessage} />
+      </div>
+    );
+  }
+  
+  // データ読み込み中の場合はローディング表示
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <LoadingIndicator />
+      </div>
+    );
+  }
   
   return (
     <div className="skill-visualization">
       <div className="skill-visualization-header">
-        <h2>{selectedSkill ? `${selectedSkill}の連携図` : 'スキル連携グラフ'}</h2>
+        <h2>{graphSkill ? `${graphSkill}の連携図` : 'スキル連携グラフ'}</h2>
         <div className="skill-search">
           <SmartSearch 
             onSelectSkill={handleSelectSkill}
@@ -80,8 +64,12 @@ export function SkillChainVisualization() {
       </div>
       
       <div className="visualization-container">
-        {selectedSkill ? (
-          <SkillFlowChart skillName={selectedSkill} />
+        {graphSkill ? (
+          <SkillFlowChart 
+            skillName={graphSkill} 
+            categoryName={selectedCategory}
+            onSkillSelect={handleSelectSkill}
+          />
         ) : (
           <div className="empty-state">
             <p className="notification">
@@ -127,6 +115,18 @@ export function SkillChainVisualization() {
 
 // スタイル用のCSSを追加
 const styles = `
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
 .skill-visualization {
   padding: 20px;
   background: #fff;

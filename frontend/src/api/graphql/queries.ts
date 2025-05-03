@@ -33,9 +33,9 @@ export const GET_SKILL_LINKED_CATEGORIES = gql`
   }
 `;
 
-// 選択した技から連携可能な技を取得
-export const GET_LINKED_SKILLS = gql`
-  query GetLinkedSkills($skillName: String!, $categoryName: String!) {
+// カテゴリ指定で選択した技から連携可能な技を取得
+export const GET_LINKED_SKILLS_BY_CATEGORY = gql`
+  query GetLinkedSkillsByCategory($skillName: String!, $categoryName: String!) {
     skill(name: $skillName) {
       name
       linksTo {
@@ -47,6 +47,18 @@ export const GET_LINKED_SKILLS = gql`
     }
     category(name: $categoryName) {
       name
+    }
+  }
+`;
+
+// カテゴリ指定なしで選択した技から連携可能な技を取得
+export const GET_LINKED_SKILLS = gql`
+  query GetLinkedSkills($skillName: String!) {
+    linkedSkills(skillName: $skillName) {
+      name
+      category {
+        name
+      }
     }
   }
 `;
