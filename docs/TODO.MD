@@ -6,8 +6,10 @@
 - [x] add graph
 - [x] feat: filter by categories on gragh
 - [x] refactor: separate component
-- [] feat: filter link skill count on gragh
+- [x] feat: filter link skill count on gragh
 - [] feat: reverse search
+- [] feat: sort categories
+- [] feat: batch damage
+- [] feat: batch special effect
+- [] feat: sort skills by damage
 - [] refactor: Consider moving connection details to environment variables for security and flexibility
-- [] sort categories
-- [] sort skills by damage
