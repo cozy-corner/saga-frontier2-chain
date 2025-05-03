@@ -1,0 +1,234 @@
+/* SkillChainVisualization Styles */
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.skill-visualization {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.skill-visualization-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.skill-search {
+  width: 250px;
+}
+
+.visualization-container {
+  margin-bottom: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-state {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px dashed #ddd;
+}
+
+.selected-category {
+  margin-top: 10px;
+  color: #777;
+}
+
+.visualization-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.category-filter {
+  margin-top: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  margin-bottom: 15px;
+}
+
+.category-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.category-filter-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.clear-all-btn {
+  background: none;
+  border: none;
+  color: #0077cc;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.category-checkbox-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.category-checkbox-item {
+  margin-bottom: 6px;
+  width: 33%;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.category-checkbox-item label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.category-checkbox-item input {
+  margin-right: 6px;
+}
+
+.category-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  border-radius: 3px;
+  background: var(--category-bg);
+  border: 1px solid var(--category-border);
+}
+
+.selected-categories-info {
+  margin-bottom: 15px;
+}
+
+.selected-category-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.selected-category-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  background-color: var(--category-bg);
+  border: 1px solid var(--category-border);
+}
+
+.remove-category {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 5px;
+  padding: 0 2px;
+}
+
+.remove-category:hover {
+  color: #333;
+}
+
+.legend, .interaction-help {
+  flex: 1;
+}
+
+.legend h4, .interaction-help h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+ul.category-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.category-legend li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.color-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border-radius: 3px;
+  background: var(--category-bg);
+  border: 1px solid var(--category-border);
+}
+
+.notification {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.interaction-help ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.interaction-help li {
+  margin-bottom: 5px;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .category-checkbox-item {
+    width: 50%; /* スマホでは2列表示 */
+  }
+  
+  .skill-visualization-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .skill-search {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
