@@ -122,3 +122,45 @@
   text-align: center;
   font-style: italic;
 }
+
+/* リンク数バッジのスタイル */
+.node-with-badge {
+  position: relative;
+}
+
+.node-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff3e00;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* ハイライト表示のためのスタイル */
+.highlighted-node {
+  filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
+  z-index: 10;
+  transform: scale(1.05);
+  opacity: 1 !important;
+}
+
+.faded-node {
+  filter: grayscale(30%);
+  opacity: 0.4;
+  z-index: 0;
+}
+
+/* カスタムノードのトランジション */
+.react-flow__node {
+  transition: all 0.2s ease, filter 0.3s ease, transform 0.3s ease;
+}
