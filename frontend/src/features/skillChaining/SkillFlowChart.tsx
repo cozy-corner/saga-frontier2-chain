@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import ReactFlow, {
   Node,
   Edge,
@@ -9,6 +9,10 @@ import ReactFlow, {
   useEdgesState,
   MiniMap,
   NodeMouseHandler,
+  NodeProps,
+  Handle,
+  Position,
+  NodeTypes,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useLinkedSkills } from '../../api/hooks/useLinkedSkills';
@@ -16,6 +20,44 @@ import { LoadingIndicator } from '../../components/common/LoadingIndicator';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
 import { getCategoryColor } from './categoryColors';
 import './SkillFlowChart.css';
+
+// スキルノードのデータ型を拡張
+interface SkillNodeData {
+  label: string;
+  category?: string;
+  linkCount?: number;
+}
+
+// カスタムノードコンポーネント
+const SkillNode = memo(({ data, selected }: NodeProps<SkillNodeData>) => {
+  // カテゴリーに基づいて色を設定
+  const colors = getCategoryColor(data.category || 'default');
+  
+  return (
+    <div 
+      className={`node-with-badge ${selected ? 'selected' : ''}`} 
+      style={{ 
+        background: colors.bg, 
+        border: `1px solid ${colors.border}`,
+        padding: '10px',
+        borderRadius: '5px',
+        width: 150,
+        textAlign: 'center',
+        position: 'relative'
+      }}
+    >
+      <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
+      <div>{data.label}</div>
+      {data.linkCount !== undefined && data.linkCount > 0 && (
+        <div className="node-badge">{data.linkCount}</div>
+      )}
+      <Handle type="source" position={Position.Bottom} style={{ background: colors.border }} />
+    </div>
+  );
+});
+
+// displayNameを追加してESLintのreact/display-nameエラーを解決
+SkillNode.displayName = 'SkillNode';
 
 interface SkillFlowChartProps {
   skillName: string;
@@ -29,6 +71,11 @@ export function SkillFlowChart({
   onSkillSelect 
 }: SkillFlowChartProps) {
   const { linkedSkills, loading, error } = useLinkedSkills(skillName, null);
+  
+  // カスタムノードタイプの定義
+  const nodeTypes = useMemo<NodeTypes>(() => ({
+    skillNode: SkillNode
+  }), []);
   
   // 選択されたカテゴリに基づいてフィルタリング
   const filteredSkills = useMemo(() => {
@@ -65,19 +112,14 @@ export function SkillFlowChart({
     
     if (!skillsToDisplay || skillsToDisplay.length === 0) {
       console.warn('連携スキルが存在しません');
-      const centerColors = getCategoryColor('default');
       setNodes([{
         id: skillName,
-        data: { label: skillName },
-        position: { x: 250, y: 250 },
-        style: { 
-          background: centerColors.bg, 
-          border: `1px solid ${centerColors.border}`,
-          padding: '10px',
-          borderRadius: '5px',
-          width: 150,
-          textAlign: 'center'
-        }
+        type: 'skillNode',
+        data: { 
+          label: skillName,
+          category: 'default'
+        },
+        position: { x: 250, y: 250 }
       }]);
       setEdges([]);
       return;
@@ -116,19 +158,16 @@ export function SkillFlowChart({
     const newEdges: Edge[] = [];
     
     // 中心ノード（選択されたスキル）
-    const centerColors = getCategoryColor('default');
+    // 中心スキルのリンク数はlinkedSkillsの長さ（このスキルからリンクしているスキル数）
     const centerNode: Node = {
       id: skillName,
-      data: { label: skillName },
-      position: { x: 250, y: 250 },
-      style: { 
-        background: centerColors.bg, 
-        border: `1px solid ${centerColors.border}`,
-        padding: '10px',
-        borderRadius: '5px',
-        width: 150,
-        textAlign: 'center'
-      }
+      type: 'skillNode', // カスタムノードタイプを指定
+      data: { 
+        label: skillName,
+        category: 'default',
+        linkCount: linkedSkills ? linkedSkills.length : 0
+      },
+      position: { x: 250, y: 250 }
     };
     newNodes.push(centerNode);
     
@@ -150,21 +189,18 @@ export function SkillFlowChart({
       // スキル名が一意であることを確認
       const uniqueId = `${skill.name}-${index}`;
       
+      // リンク数を取得：各スキルが持つlinksToの長さ（リンク先が何個あるか）
+      const linkCount = skill.linksTo?.length || 0;
+      
       newNodes.push({
         id: uniqueId,
+        type: 'skillNode', // カスタムノードタイプを指定
         data: { 
           label: skill.name,
-          category: skillCategoryName
+          category: skillCategoryName,
+          linkCount: linkCount // リンク数を追加
         },
-        position: { x, y },
-        style: { 
-          background: colors.bg, 
-          border: `1px solid ${colors.border}`,
-          padding: '10px',
-          borderRadius: '5px',
-          width: 150,
-          textAlign: 'center'
-        }
+        position: { x, y }
       });
       
       // 中心ノードから各スキルへのエッジを追加
@@ -198,15 +234,12 @@ export function SkillFlowChart({
       
       setHighlightedNodes(relatedNodeIds);
       
-      // 関連ノードの強調表示
+      // 関連ノードの強調表示（カスタムノード用に修正）
       setNodes(nds => 
         nds.map(n => ({
           ...n,
-          style: {
-            ...n.style,
-            opacity: relatedNodeIds.includes(n.id) ? 1 : 0.3,
-            zIndex: relatedNodeIds.includes(n.id) ? 1 : 0
-          }
+          // ノードクラス名でハイライト状態を制御
+          className: relatedNodeIds.includes(n.id) ? 'highlighted-node' : 'faded-node'
         }))
       );
       
@@ -214,6 +247,7 @@ export function SkillFlowChart({
       setEdges(eds => 
         eds.map(e => ({
           ...e,
+          animated: connectedEdges.some(ce => ce.id === e.id),
           style: {
             ...e.style,
             opacity: connectedEdges.some(ce => ce.id === e.id) ? 1 : 0.1,
@@ -232,11 +266,7 @@ export function SkillFlowChart({
     setNodes(nds => 
       nds.map(n => ({
         ...n,
-        style: {
-          ...n.style,
-          opacity: 1,
-          zIndex: 0
-        }
+        className: '', // クラス名をリセット
       }))
     );
     
@@ -281,6 +311,7 @@ export function SkillFlowChart({
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeMouseEnter={onNodeMouseEnter}
