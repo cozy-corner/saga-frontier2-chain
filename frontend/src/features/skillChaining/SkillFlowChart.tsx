@@ -66,11 +66,11 @@ interface SkillFlowChartProps {
 }
 
 export function SkillFlowChart({ 
-  skillName, 
+  skillName: sourceSkillName, 
   selectedCategories = [], 
   onSkillSelect 
 }: SkillFlowChartProps) {
-  const { linkedSkills, loading, error } = useLinkedSkills(skillName, null);
+  const { linkedSkills, loading, error } = useLinkedSkills(sourceSkillName, null);
   
   // カスタムノードタイプの定義
   const nodeTypes = useMemo<NodeTypes>(() => ({
@@ -97,7 +97,7 @@ export function SkillFlowChart({
   
     // スキルデータからノードとエッジを生成
   useEffect(() => {
-    console.log('スキル名:', skillName);
+    console.log('スキル名:', sourceSkillName);
     console.log('選択カテゴリ:', selectedCategories);
     console.log('連携スキルデータ:', JSON.stringify(linkedSkills, null, 2));
     console.log('フィルタリング後のスキル数:', filteredSkills.length);
@@ -113,10 +113,10 @@ export function SkillFlowChart({
     if (!skillsToDisplay || skillsToDisplay.length === 0) {
       console.warn('連携スキルが存在しません');
       setNodes([{
-        id: skillName,
+        id: sourceSkillName,
         type: 'skillNode',
         data: { 
-          label: skillName,
+          label: sourceSkillName,
           category: 'default'
         },
         position: { x: 250, y: 250 }
@@ -146,11 +146,11 @@ export function SkillFlowChart({
     console.log('フィルタリング状態:', selectedCategories.length > 0 ? 'カテゴリでフィルター中' : 'フィルターなし');
     
     // スキルごとの詳細情報をログに出力
-    validLinkedSkills.forEach((skill, index) => {
+    validLinkedSkills.forEach((targetSkill, index) => {
       console.log(`スキル ${index + 1}:`, {
-        名前: skill.name,
-        カテゴリ: skill.category?.name || 'カテゴリなし',
-        データ構造: JSON.stringify(skill)
+        名前: targetSkill.name,
+        カテゴリ: targetSkill.category?.name || 'カテゴリなし',
+        データ構造: JSON.stringify(targetSkill)
       });
     });
     
@@ -160,10 +160,10 @@ export function SkillFlowChart({
     // 中心ノード（選択されたスキル）
     // 中心スキルのリンク数はlinkedSkillsの長さ（このスキルからリンクしているスキル数）
     const centerNode: Node = {
-      id: skillName,
+      id: sourceSkillName,
       type: 'skillNode', // カスタムノードタイプを指定
       data: { 
-        label: skillName,
+        label: sourceSkillName,
         category: 'default',
         linkCount: linkedSkills ? linkedSkills.length : 0
       },
@@ -171,8 +171,8 @@ export function SkillFlowChart({
     };
     newNodes.push(centerNode);
     
-    // 連携スキルをノードとして追加
-    validLinkedSkills.forEach((skill, index) => {
+    // 連携先スキルをノードとして追加
+    validLinkedSkills.forEach((targetSkill, index) => {
       // 円形に配置する計算
       const totalSkills = validLinkedSkills.length;
       const angle = (index * 2 * Math.PI) / totalSkills;
@@ -181,33 +181,33 @@ export function SkillFlowChart({
       const y = 250 + radius * Math.sin(angle);
       
       // カテゴリーに基づいて色を設定
-      const skillCategoryName = skill.category?.name || '';
-      const colors = getCategoryColor(skillCategoryName);
+      const targetSkillCategory = targetSkill.category?.name || '';
+      const colors = getCategoryColor(targetSkillCategory);
       
-      console.log(`スキル "${skill.name}" のカテゴリ: ${skillCategoryName}, 色: ${colors.bg}`);
+      console.log(`スキル "${targetSkill.name}" のカテゴリ: ${targetSkillCategory}, 色: ${colors.bg}`);
       
-      // スキル名が一意であることを確認
-      const uniqueId = `${skill.name}-${index}`;
+      // スキル名は一意なので、そのままIDとして使用
+      const targetSkillName = targetSkill.name;
       
       // リンク数を取得：各スキルが持つlinksToの長さ（リンク先が何個あるか）
-      const linkCount = skill.linksTo?.length || 0;
+      const linkCount = targetSkill.linksTo?.length || 0;
       
       newNodes.push({
-        id: uniqueId,
+        id: targetSkillName,
         type: 'skillNode', // カスタムノードタイプを指定
         data: { 
-          label: skill.name,
-          category: skillCategoryName,
+          label: targetSkill.name,
+          category: targetSkillCategory,
           linkCount: linkCount // リンク数を追加
         },
         position: { x, y }
       });
       
-      // 中心ノードから各スキルへのエッジを追加
+      // 中心ノードから各スキルへのエッジを追加（安定したID）
       newEdges.push({
-        id: `${skillName}-${uniqueId}`,
-        source: skillName,
-        target: uniqueId,
+        id: `${sourceSkillName}-to-${targetSkillName}`, // 関係性がわかりやすいID形式
+        source: sourceSkillName,
+        target: targetSkillName,
         animated: true,
         style: { stroke: colors.border },
         type: 'smoothstep'
@@ -216,8 +216,8 @@ export function SkillFlowChart({
     
     setNodes(newNodes);
     setEdges(newEdges);
-    setHighlightedNodes([skillName]); // 初期状態では中心ノードのみハイライト
-  }, [skillName, linkedSkills, filteredSkills, loading, setNodes, setEdges, selectedCategories, error?.message]);
+    setHighlightedNodes([sourceSkillName]); // 初期状態では中心ノードのみハイライト
+  }, [sourceSkillName, linkedSkills, filteredSkills, loading, setNodes, setEdges, selectedCategories, error?.message]);
   
   // ノードホバー時のハイライト処理
   const onNodeMouseEnter: NodeMouseHandler = useCallback((_, node) => {
@@ -281,8 +281,8 @@ export function SkillFlowChart({
       }))
     );
     
-    setHighlightedNodes([skillName]);
-  }, [skillName, setNodes, setEdges]);
+    setHighlightedNodes([sourceSkillName]);
+  }, [sourceSkillName, setNodes, setEdges]);
   
   // ノードクリック時の処理
   const onNodeClick: NodeMouseHandler = useCallback((_, node) => {
