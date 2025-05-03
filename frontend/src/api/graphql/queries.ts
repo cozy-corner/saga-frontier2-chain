@@ -43,6 +43,9 @@ export const GET_LINKED_SKILLS_BY_CATEGORY = gql`
         category {
           name
         }
+        linksTo {
+          name
+        }
       }
     }
     category(name: $categoryName) {
@@ -57,6 +60,9 @@ export const GET_LINKED_SKILLS = gql`
     linkedSkills(skillName: $skillName) {
       name
       category {
+        name
+      }
+      linksTo {
         name
       }
     }
