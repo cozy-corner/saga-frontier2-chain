@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import ReactFlow, {
   Node,
   Edge,
@@ -19,16 +19,30 @@ import './SkillFlowChart.css';
 
 interface SkillFlowChartProps {
   skillName: string;
-  categoryName?: string | null;
+  selectedCategories?: string[];
   onSkillSelect?: (skillName: string) => void;
 }
 
 export function SkillFlowChart({ 
   skillName, 
-  categoryName = null, 
+  selectedCategories = [], 
   onSkillSelect 
 }: SkillFlowChartProps) {
-  const { linkedSkills, loading, error } = useLinkedSkills(skillName, categoryName);
+  const { linkedSkills, loading, error } = useLinkedSkills(skillName, null);
+  
+  // 選択されたカテゴリに基づいてフィルタリング
+  const filteredSkills = useMemo(() => {
+    if (!linkedSkills || linkedSkills.length === 0) return [];
+    
+    // カテゴリが選択されていない場合はすべてのスキルを表示
+    if (selectedCategories.length === 0) return linkedSkills;
+    
+    // 選択されたカテゴリに属するスキルのみをフィルタリング
+    return linkedSkills.filter(skill => {
+      const skillCategory = skill.category?.name || '';
+      return selectedCategories.includes(skillCategory);
+    });
+  }, [linkedSkills, selectedCategories]);
   
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -37,15 +51,19 @@ export function SkillFlowChart({
     // スキルデータからノードとエッジを生成
   useEffect(() => {
     console.log('スキル名:', skillName);
-    console.log('選択カテゴリ:', categoryName);
+    console.log('選択カテゴリ:', selectedCategories);
     console.log('連携スキルデータ:', JSON.stringify(linkedSkills, null, 2));
+    console.log('フィルタリング後のスキル数:', filteredSkills.length);
     console.log('ローディング状態:', loading);
     console.log('エラー状態:', error?.message);
     
     // データチェック: 空の場合や読み込み中は処理しない
     if (loading) return;
     
-    if (!linkedSkills || linkedSkills.length === 0) {
+    // 使用するスキルデータを選択（フィルタリング済みか全部か）
+    const skillsToDisplay = selectedCategories.length > 0 ? filteredSkills : linkedSkills;
+    
+    if (!skillsToDisplay || skillsToDisplay.length === 0) {
       console.warn('連携スキルが存在しません');
       const centerColors = getCategoryColor('default');
       setNodes([{
@@ -66,7 +84,7 @@ export function SkillFlowChart({
     }
     
     // 入力データの検証
-    const validLinkedSkills = linkedSkills.filter(skill => {
+    const validLinkedSkills = skillsToDisplay.filter(skill => {
       // スキル名の検証
       if (!skill.name || typeof skill.name !== 'string') {
         console.warn('無効なスキル名:', skill);
@@ -83,6 +101,7 @@ export function SkillFlowChart({
     });
     
     console.log('有効なスキル数:', validLinkedSkills.length);
+    console.log('フィルタリング状態:', selectedCategories.length > 0 ? 'カテゴリでフィルター中' : 'フィルターなし');
     
     // スキルごとの詳細情報をログに出力
     validLinkedSkills.forEach((skill, index) => {
@@ -162,7 +181,7 @@ export function SkillFlowChart({
     setNodes(newNodes);
     setEdges(newEdges);
     setHighlightedNodes([skillName]); // 初期状態では中心ノードのみハイライト
-  }, [skillName, linkedSkills, loading, setNodes, setEdges, categoryName, error?.message]);
+  }, [skillName, linkedSkills, filteredSkills, loading, setNodes, setEdges, selectedCategories, error?.message]);
   
   // ノードホバー時のハイライト処理
   const onNodeMouseEnter: NodeMouseHandler = useCallback((_, node) => {
