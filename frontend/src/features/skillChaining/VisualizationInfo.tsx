@@ -22,9 +22,9 @@ export const VisualizationInfo: React.FC<VisualizationInfoProps> = ({
                 <span 
                   className="color-box" 
                   style={{ 
-                    background: colors.bg,
-                    border: `1px solid ${colors.border}`
-                  }}
+                    '--category-bg': colors.bg,
+                    '--category-border': colors.border 
+                  } as React.CSSProperties}
                 ></span> 
                 {category}
               </li>

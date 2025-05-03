@@ -24,10 +24,10 @@ export const SelectedCategoryTags: React.FC<SelectedCategoryTagsProps> = ({
               key={cat} 
               className="selected-category-tag" 
               style={{ 
-                backgroundColor: colors.bg,
-                border: `1px solid ${colors.border}`,
+                '--category-bg': colors.bg,
+                '--category-border': colors.border,
                 color: '#333'
-              }}
+              } as React.CSSProperties}
             >
               {cat}
               <button 

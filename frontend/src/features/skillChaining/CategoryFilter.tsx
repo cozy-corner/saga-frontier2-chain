@@ -46,9 +46,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
               <span 
                 className="category-color" 
                 style={{ 
-                  background: getCategoryColor(category).bg,
-                  border: `1px solid ${getCategoryColor(category).border}`
-                }}
+                  '--category-bg': getCategoryColor(category).bg,
+                  '--category-border': getCategoryColor(category).border
+                } as React.CSSProperties}
               ></span>
               {category}
             </label>
