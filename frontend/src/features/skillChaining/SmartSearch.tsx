@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useChain } from './ChainContext';
 
 interface SkillSuggestion {
   name: string;
@@ -17,7 +16,6 @@ export function SmartSearch({ onSelectSkill, allSkills, loading = false }: Smart
   const [suggestions, setSuggestions] = useState<SkillSuggestion[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const { state } = useChain();
 
   // 検索語句の変更を監視して、サジェスチョンを更新
   useEffect(() => {

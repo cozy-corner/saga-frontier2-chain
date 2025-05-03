@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MainLayout } from './layouts/MainLayout';
 import { CategoryList } from './features/categories/CategoryList';
 import { SkillList } from './features/skills/SkillList';
 import { LinkedCategories } from './features/skillChaining/LinkedCategories';
+import { SkillChainVisualization } from './features/skillChaining/SkillChainVisualization';
 import { ChainProvider, useChain } from './features/skillChaining/ChainContext';
+import { GraphProvider } from './features/skillChaining/GraphVisualizationContext';
 
 function ChainViewer() {
   const { state, dispatch } = useChain();
@@ -66,14 +68,94 @@ function ChainViewer() {
 }
 
 function App() {
+  const [viewMode, setViewMode] = useState<'list' | 'graph'>('list');
+  
+  // 表示モード切り替えボタンのスタイル
+  const buttonStyle = {
+    padding: '8px 16px',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    margin: '0 5px 15px 0',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  };
+  
+  const activeStyle = {
+    ...buttonStyle,
+    background: '#f6ab6c',
+    color: 'white',
+  };
+  
+  const inactiveStyle = {
+    ...buttonStyle,
+    background: '#f0f0f0',
+    color: '#666',
+  };
+
   return (
     <ChainProvider>
       <MainLayout>
         <h1>SaGa Frontier2 術・技連携ビジュアライザー</h1>
-        <ChainViewer />
+        <div className="view-toggle">
+          <button 
+            style={viewMode === 'list' ? activeStyle : inactiveStyle}
+            onClick={() => setViewMode('list')}
+          >
+            リスト表示
+          </button>
+          <button 
+            style={viewMode === 'graph' ? activeStyle : inactiveStyle}
+            onClick={() => setViewMode('graph')}
+          >
+            グラフ表示
+          </button>
+        </div>
+        
+        {viewMode === 'list' ? (
+          <ChainViewer />
+        ) : (
+          <GraphProvider>
+            <SkillChainVisualization />
+          </GraphProvider>
+        )}
       </MainLayout>
     </ChainProvider>
   );
 }
+
+// スタイル用のCSSを追加します
+const styles = `
+.view-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  flex: 1;
+  min-width: 250px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+}
+`;
+
+// スタイルを適用
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
 export default App;
