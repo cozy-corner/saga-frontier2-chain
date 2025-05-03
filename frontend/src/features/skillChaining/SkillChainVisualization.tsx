@@ -84,6 +84,7 @@ export function SkillChainVisualization() {
                 <input
                   type="checkbox"
                   checked={selectedCategories.includes(category)}
+                  aria-label={`Filter by ${category} category`}
                   onChange={() => {
                     setSelectedCategories(prev => {
                       if (prev.includes(category)) {
