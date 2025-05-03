@@ -29,31 +29,34 @@ export function useAllSkills() {
           return;
         }
 
+        // Promise.allSettledを使用して並列にスキルを取得
+        const results = await Promise.allSettled(
+          categoriesData.categories.map(c => 
+            client.query<CategoryQueryResult>({
+              query: GET_SKILLS_BY_CATEGORY,
+              variables: { categoryName: c.name }
+            })
+          )
+        );
+        
+        // 結果を処理して全スキルリストを作成
         const allSkillsList: SkillWithCategory[] = [];
         
-        // 各カテゴリのスキルを順番に取得
-        for (const category of categoriesData.categories) {
-          try {
-            // カテゴリごとにスキルを取得
-            const { data: categoryData } = await client.query<CategoryQueryResult>({
-              query: GET_SKILLS_BY_CATEGORY,
-              variables: { categoryName: category.name }
-            });
-
-            if (categoryData?.category?.skills) {
-              // スキルをフォーマットして追加
-              const formattedSkills = categoryData.category.skills.map(skill => ({
-                name: skill.name,
-                category: category.name
-              }));
-              
-              allSkillsList.push(...formattedSkills);
-              console.log(`カテゴリ「${category.name}」のスキル ${formattedSkills.length}件を追加`);
-            }
-          } catch (categoryError) {
-            console.error(`カテゴリ「${category.name}」のスキル取得エラー:`, categoryError);
+        results.forEach((result, index) => {
+          const category = categoriesData.categories[index];
+          
+          if (result.status === 'fulfilled' && result.value.data?.category?.skills) {
+            const formattedSkills = result.value.data.category.skills.map(skill => ({
+              name: skill.name,
+              category: category.name
+            }));
+            
+            allSkillsList.push(...formattedSkills);
+            console.log(`カテゴリ「${category.name}」のスキル ${formattedSkills.length}件を追加`);
+          } else if (result.status === 'rejected') {
+            console.error(`カテゴリ「${category.name}」のスキル取得エラー:`, result.reason);
           }
-        }
+        });
         
         console.log('全スキルデータ取得完了:', allSkillsList.length);
         setAllSkills(allSkillsList);
