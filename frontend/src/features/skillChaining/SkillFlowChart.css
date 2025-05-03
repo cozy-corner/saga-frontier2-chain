@@ -1,0 +1,124 @@
+.skill-flow-container {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+/* スキルノードの共通スタイル */
+.react-flow__node {
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+}
+
+.react-flow__node:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+  z-index: 10 !important;
+}
+
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px #ff6b6b;
+}
+
+/* ノード間のエッジスタイル */
+.react-flow__edge {
+  transition: opacity 0.2s ease;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+@keyframes dashdraw {
+  from {
+    stroke-dashoffset: 10;
+  }
+}
+
+/* コントロールのスタイル調整 */
+.react-flow__controls {
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08);
+}
+
+/* ミニマップのスタイル調整 */
+.react-flow__minimap {
+  border-radius: 5px;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08);
+}
+
+
+/* ホバー時のスタイル強調 */
+.react-flow__node:hover .react-flow__handle {
+  opacity: 1;
+}
+
+/* 表示・非表示のトランジション */
+.react-flow__node,
+.react-flow__edge {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* ツールチップスタイル */
+.node-tooltip {
+  position: absolute;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 250px;
+}
+
+/* ローディング状態のコンテナ */
+.loading-container {
+  width: 100%;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: #666;
+}
+
+/* エラー状態のコンテナ */
+.error-container {
+  width: 100%;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff9f9;
+  border: 1px solid #ffdddd;
+  border-radius: 5px;
+  color: #d32f2f;
+  padding: 20px;
+  text-align: center;
+}
+
+/* データがない場合のコンテナ */
+.empty-container {
+  width: 100%;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: #666;
+  padding: 20px;
+  text-align: center;
+  font-style: italic;
+}
