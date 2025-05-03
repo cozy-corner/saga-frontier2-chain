@@ -3,7 +3,9 @@
 - [x] select skill then line up candidate Category.
 - [x] backend test
 - [x] run test on ci
-- [] Consider moving connection details to environment variables for security and flexibility
+- [] refactor: Consider moving connection details to environment variables for security and flexibility
 - [x] add graph
-- [] filter by categories on gragh
-- [] filter link skill count on gragh
+- [x] feat: filter by categories on gragh
+- [] feat: filter link skill count on gragh
+- [] feat: reverse search
+- [] refactor: separate component
