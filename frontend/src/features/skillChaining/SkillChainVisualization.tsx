@@ -6,6 +6,7 @@ import { ErrorMessage } from '../../components/common/ErrorMessage';
 import { LoadingIndicator } from '../../components/common/LoadingIndicator';
 import { useCategories } from '../../api/hooks/useCategories';
 import { useAllSkills } from '../../api/hooks/useAllSkills';
+import { getCategoryColor } from './categoryColors';
 
 export function SkillChainVisualization() {
   const { state: graphState, setGraphSkill } = useGraphVisualization();
@@ -88,11 +89,21 @@ export function SkillChainVisualization() {
         <div className="legend">
           <h4>カテゴリー</h4>
           <ul className="category-legend">
-            {availableCategories.map((category, index) => (
-              <li key={category}>
-                <span className={`color-box category-${index % 5}`}></span> {category}
-              </li>
-            ))}
+            {availableCategories.map((category) => {
+              const colors = getCategoryColor(category);
+              return (
+                <li key={category}>
+                  <span 
+                    className="color-box" 
+                    style={{ 
+                      background: colors.bg,
+                      border: `1px solid ${colors.border}`
+                    }}
+                  ></span> 
+                  {category}
+                </li>
+              );
+            })}
             {availableCategories.length === 0 && !isLoading && (
               <li>カテゴリ情報の取得に失敗しました</li>
             )}
@@ -219,31 +230,6 @@ ul.category-legend li {
   height: 16px;
   margin-right: 8px;
   border-radius: 3px;
-}
-
-.color-box.category-0 {
-  background: #d4f1f9;
-  border: 1px solid #75c6ef;
-}
-
-.color-box.category-1 {
-  background: #ffe5e5;
-  border: 1px solid #ff9e9e;
-}
-
-.color-box.category-2 {
-  background: #e6f9d4;
-  border: 1px solid #6def75;
-}
-
-.color-box.category-3 {
-  background: #e5e5ff;
-  border: 1px solid #9e9eff;
-}
-
-.color-box.category-4 {
-  background: #ffffe5;
-  border: 1px solid #ffff9e;
 }
 
 .notification {
