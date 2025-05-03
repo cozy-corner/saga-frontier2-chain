@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { SkillFlowChart } from './SkillFlowChart';
 import { useGraphVisualization } from './GraphVisualizationContext';
 import { SmartSearch } from './SmartSearch';
