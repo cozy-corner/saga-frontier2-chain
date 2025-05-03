@@ -30,29 +30,6 @@ export function useLinkedSkills(sourceSkillName: string | null, categoryName: st
   const loading = loadingWithCategory || loadingWithoutCategory;
   const error = errorWithCategory || errorWithoutCategory;
   
-  // デバッグ用ログ出力
-  if (categoryName) {
-    console.log('カテゴリ指定クエリ - API返却データ:', JSON.stringify(dataWithCategory, null, 2));
-    
-    if (dataWithCategory?.skill?.linksTo) {
-      console.log('カテゴリ指定 - スキル数:', dataWithCategory.skill.linksTo.length);
-      console.log('スキルの名前一覧:', dataWithCategory.skill.linksTo.map(s => s.name));
-      
-      // カテゴリ情報のチェック
-      const missingCategoryCount = dataWithCategory.skill.linksTo.filter(s => !s.category).length;
-      if (missingCategoryCount > 0) {
-        console.log('カテゴリ情報がないスキル:', dataWithCategory.skill.linksTo.filter(s => !s.category).map(s => s.name));
-      }
-    }
-  } else {
-    console.log('カテゴリなしクエリ - API返却データ:', JSON.stringify(dataWithoutCategory, null, 2));
-    
-    if (dataWithoutCategory?.linkedSkills) {
-      console.log('カテゴリなし - スキル数:', dataWithoutCategory.linkedSkills.length);
-      console.log('スキルの名前一覧:', dataWithoutCategory.linkedSkills.map(s => s.name));
-    }
-  }
-  
   // データソースの選択
   let linkedSkills = [];
   if (categoryName) {
