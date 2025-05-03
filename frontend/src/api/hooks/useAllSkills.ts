@@ -16,8 +16,9 @@ export function useAllSkills() {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
     async function fetchAllSkills() {
-      setLoading(true);
+      if (isMounted) setLoading(true);
       try {
         // まずカテゴリ一覧を取得
         const { data: categoriesData } = await client.query<CategoriesQueryResult>({
@@ -59,17 +60,26 @@ export function useAllSkills() {
         });
         
         console.log('全スキルデータ取得完了:', allSkillsList.length);
-        setAllSkills(allSkillsList);
-        setError(null);
+        if (isMounted) {
+          setAllSkills(allSkillsList);
+          setError(null);
+        }
       } catch (err) {
         console.error('スキルデータの取得エラー:', err);
-        setError(err instanceof Error ? err : new Error('スキルデータの取得に失敗しました'));
+        if (isMounted) {
+          setError(err instanceof Error ? err : new Error('スキルデータの取得に失敗しました'));
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
 
     fetchAllSkills();
+    
+    // クリーンアップ関数: コンポーネントのアンマウント時に実行される
+    return () => {
+      isMounted = false;
+    };
   }, [client]); // clientのみを依存配列に入れる
 
   return {
