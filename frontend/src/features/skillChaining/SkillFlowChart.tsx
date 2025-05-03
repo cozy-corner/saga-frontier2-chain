@@ -14,6 +14,7 @@ import 'reactflow/dist/style.css';
 import { useLinkedSkills } from '../../api/hooks/useLinkedSkills';
 import { LoadingIndicator } from '../../components/common/LoadingIndicator';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
+import { getCategoryColor } from './categoryColors';
 import './SkillFlowChart.css';
 
 interface SkillFlowChartProps {
@@ -46,13 +47,14 @@ export function SkillFlowChart({
     
     if (!linkedSkills || linkedSkills.length === 0) {
       console.warn('連携スキルが存在しません');
+      const centerColors = getCategoryColor('default');
       setNodes([{
         id: skillName,
         data: { label: skillName },
         position: { x: 250, y: 250 },
         style: { 
-          background: '#f6ab6c', 
-          border: '1px solid #c56c1d',
+          background: centerColors.bg, 
+          border: `1px solid ${centerColors.border}`,
           padding: '10px',
           borderRadius: '5px',
           width: 150,
@@ -94,26 +96,15 @@ export function SkillFlowChart({
     const newNodes: Node[] = [];
     const newEdges: Edge[] = [];
     
-    // カテゴリーごとの色を定義
-    const categoryColors: Record<string, { bg: string, border: string }> = {
-      default: { bg: '#f6ab6c', border: '#c56c1d' },
-      '基本術': { bg: '#d4f1f9', border: '#75c6ef' },
-      '合成術': { bg: '#e6f9d4', border: '#6def75' },
-      '剣': { bg: '#ffe5e5', border: '#ff9e9e' },
-      '槍': { bg: '#e5e5ff', border: '#9e9eff' },
-      '斧': { bg: '#ffe5ff', border: '#ff9eff' },
-      '弓': { bg: '#ffffe5', border: '#ffff9e' },
-      // 他のカテゴリーごとに色を追加
-    };
-    
     // 中心ノード（選択されたスキル）
+    const centerColors = getCategoryColor('default');
     const centerNode: Node = {
       id: skillName,
       data: { label: skillName },
       position: { x: 250, y: 250 },
       style: { 
-        background: '#f6ab6c', 
-        border: '1px solid #c56c1d',
+        background: centerColors.bg, 
+        border: `1px solid ${centerColors.border}`,
         padding: '10px',
         borderRadius: '5px',
         width: 150,
@@ -133,11 +124,7 @@ export function SkillFlowChart({
       
       // カテゴリーに基づいて色を設定
       const skillCategoryName = skill.category?.name || '';
-      const categoryColorKey = Object.keys(categoryColors).find(key => 
-        skillCategoryName.toLowerCase().includes(key.toLowerCase())
-      ) || 'default';
-      
-      const colors = categoryColors[categoryColorKey] || categoryColors.default;
+      const colors = getCategoryColor(skillCategoryName);
       
       console.log(`スキル "${skill.name}" のカテゴリ: ${skillCategoryName}, 色: ${colors.bg}`);
       
