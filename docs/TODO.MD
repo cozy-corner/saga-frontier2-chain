@@ -4,3 +4,6 @@
 - [x] backend test
 - [x] run test on ci
 - [] Consider moving connection details to environment variables for security and flexibility
+- [x] add graph
+- [] filter by categories on gragh
+- [] filter link skill count on gragh
