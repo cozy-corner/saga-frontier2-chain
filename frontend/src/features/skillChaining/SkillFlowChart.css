@@ -54,16 +54,6 @@
   box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08);
 }
 
-/* カテゴリーごとのスタイル */
-.category-magic {
-  background: #d4f1f9 !important;
-  border-color: #75c6ef !important;
-}
-
-.category-weapon {
-  background: #ffe5e5 !important;
-  border-color: #ff9e9e !important;
-}
 
 /* ホバー時のスタイル強調 */
 .react-flow__node:hover .react-flow__handle {
