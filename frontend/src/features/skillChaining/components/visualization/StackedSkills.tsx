@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSkillStack } from '@features/skillChaining/context/SkillStackContext';
 import { getCategoryColor } from '@features/skillChaining/utils/categoryColors';
 
@@ -29,8 +29,8 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
     };
   });
   
-  // スキルクリックハンドラー
-  const handleSkillClick = (skillName: string, index: number) => {
+  // スキルクリックハンドラー - useCallbackでメモ化して不要な再作成を防止
+  const handleSkillClick = useCallback((skillName: string, index: number) => {
     // スキルスタック内での選択位置を記録し、それより後ろのスキルを削除
     dispatch({ type: 'SELECT_STACK_SKILL', payload: index });
     
@@ -38,7 +38,7 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
     if (onSkillClick) {
       onSkillClick(skillName);
     }
-  };
+  }, [dispatch, onSkillClick]);
   
   if (selectedSkills.length === 0) {
     return <div className="stacked-skills-empty">選択されたスキルがありません</div>;
