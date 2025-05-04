@@ -37,15 +37,10 @@ const SkillNode = memo(({ data, selected }: NodeProps<SkillNodeData>) => {
   
   return (
     <div 
-      className={`node-with-badge ${selected ? 'selected' : ''}`} 
+      className={`node-with-badge skill-node ${selected ? 'selected' : ''}`} 
       style={{ 
         background: colors.bg, 
-        border: `1px solid ${colors.border}`,
-        padding: '10px',
-        borderRadius: '5px',
-        width: 150,
-        textAlign: 'center',
-        position: 'relative'
+        border: `1px solid ${colors.border}`
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: colors.border }} />

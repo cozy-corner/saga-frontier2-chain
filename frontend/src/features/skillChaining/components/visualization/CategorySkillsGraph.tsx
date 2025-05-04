@@ -33,13 +33,7 @@ const SkillNode = ({ data }: NodeProps<SkillNodeData>) => {
       className="skill-node"
       style={{ 
         background: colors.bg, 
-        border: `1px solid ${colors.border}`,
-        padding: '10px',
-        borderRadius: '5px',
-        width: 150,
-        textAlign: 'center',
-        position: 'relative',
-        cursor: 'pointer'
+        border: `1px solid ${colors.border}`
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
