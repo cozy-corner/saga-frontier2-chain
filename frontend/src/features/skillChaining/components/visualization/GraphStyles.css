@@ -69,3 +69,36 @@
 .empty-container button:hover {
   background: #e6e6e6;
 }
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .category-graph,
+  .category-skills-graph {
+    height: 400px;
+    margin-bottom: 15px;
+  }
+
+  .empty-state {
+    padding: 15px;
+    margin-top: 15px;
+  }
+
+  .notification {
+    font-size: 1rem;
+  }
+
+  .empty-container {
+    padding: 15px;
+    margin-top: 15px;
+  }
+
+  .empty-container button {
+    padding: 6px 12px;
+    margin-top: 8px;
+  }
+
+  .category-skills-title {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+}
