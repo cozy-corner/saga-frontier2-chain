@@ -216,6 +216,47 @@ ul.category-legend li {
   margin-bottom: 5px;
 }
 
+/* スタックされたスキル表示のスタイル */
+.stacked-skills-container {
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stacked-skills-container h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.stacked-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stacked-skill-item {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stacked-skill-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.stacked-skills-empty {
+  padding: 10px;
+  color: #666;
+  font-style: italic;
+}
+
 /* モバイル対応 */
 @media (max-width: 768px) {
   .category-checkbox-item {

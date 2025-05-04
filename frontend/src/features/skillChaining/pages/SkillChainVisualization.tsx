@@ -11,6 +11,7 @@ import { CategoryFilter } from '../components/filters/CategoryFilter';
 import { SelectedCategoryTags } from '../components/filters/SelectedCategoryTags';
 import { VisualizationContent } from '../components/visualization/VisualizationContent';
 import { VisualizationInfo } from '../components/visualization/VisualizationInfo';
+import { StackedSkills } from '../components/visualization/StackedSkills';
 
 // Import the CSS
 import '../styles/SkillChainStyles.css';
@@ -81,6 +82,12 @@ export function SkillChainVisualization() {
       <SelectedCategoryTags 
         selectedCategories={selectedCategories}
         onRemoveCategory={handleRemoveCategory}
+      />
+      
+      {/* スキル積み上げ表示コンポーネント */}
+      <StackedSkills
+        allSkills={allSkills}
+        onSkillClick={handleSelectSkill}
       />
       
       <VisualizationContent 
