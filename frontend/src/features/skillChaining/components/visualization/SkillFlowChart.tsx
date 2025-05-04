@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useSkillStack } from '@features/skillChaining/context/SkillStackContext';
 import ReactFlow, {
   Node,
   Edge,
@@ -71,6 +72,7 @@ export function SkillFlowChart({
   onSkillSelect 
 }: SkillFlowChartProps) {
   const { linkedSkills, loading, error } = useLinkedSkills(sourceSkillName, null);
+  const { dispatch: skillStackDispatch } = useSkillStack();
   
   // カスタムノードタイプの定義
   const nodeTypes = useMemo<NodeTypes>(() => ({
@@ -291,6 +293,10 @@ export function SkillFlowChart({
       const clickedSkillName = node.data?.label;
       if (typeof clickedSkillName === 'string') {
         console.log(`スキル選択: ${clickedSkillName}`);
+        
+        // スキルスタックに追加
+        skillStackDispatch({ type: 'ADD_SKILL', payload: clickedSkillName });
+        
         if (onSkillSelect) {
           onSkillSelect(clickedSkillName);
         }
@@ -300,7 +306,7 @@ export function SkillFlowChart({
     } catch (error) {
       console.error('ノードクリック処理でエラーが発生しました:', error);
     }
-  }, [onSkillSelect]);
+  }, [onSkillSelect, skillStackDispatch]);
   
   if (loading) return <div className="loading-container"><LoadingIndicator /></div>;
   if (error) return <div className="error-container"><ErrorMessage message={error?.message || 'エラーが発生しました'} /></div>;
