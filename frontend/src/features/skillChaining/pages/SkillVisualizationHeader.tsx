@@ -1,6 +1,6 @@
 import React from 'react';
-import { SmartSearch } from './SmartSearch';
-import { SkillWithCategory } from '../../api/hooks/useAllSkills';
+import { SmartSearch } from '../components/visualization/SmartSearch';
+import { SkillWithCategory } from '../../../api/hooks/useAllSkills';
 
 // Define SkillSuggestion to match what SmartSearch expects
 interface SkillSuggestion {
