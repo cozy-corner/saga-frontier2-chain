@@ -9,6 +9,8 @@
 - [x] feat: filter link skill count on gragh
 - [x] refactor: frondend directory
 - [x] feat: pile up skills
+- [x] feat: remove search box
+- [] fix: add first skill to linked box
 - [] feat: reverse search
 - [] feat: sort categories
 - [] feat: batch damage

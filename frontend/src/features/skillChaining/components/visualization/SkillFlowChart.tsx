@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { calculateCircleLayout } from '@features/skillChaining/utils/graphLayout';
 import { useSkillStack } from '@features/skillChaining/context/SkillStackContext';
 import ReactFlow, {
   Node,
@@ -36,15 +37,10 @@ const SkillNode = memo(({ data, selected }: NodeProps<SkillNodeData>) => {
   
   return (
     <div 
-      className={`node-with-badge ${selected ? 'selected' : ''}`} 
+      className={`graph-node-base node-with-badge skill-node ${selected ? 'selected' : ''}`} 
       style={{ 
         background: colors.bg, 
-        border: `1px solid ${colors.border}`,
-        padding: '10px',
-        borderRadius: '5px',
-        width: 150,
-        textAlign: 'center',
-        position: 'relative'
+        border: `1px solid ${colors.border}`
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
@@ -176,11 +172,11 @@ export function SkillFlowChart({
     // 連携先スキルをノードとして追加
     validLinkedSkills.forEach((targetSkill, index) => {
       // 円形に配置する計算
-      const totalSkills = validLinkedSkills.length;
-      const angle = (index * 2 * Math.PI) / totalSkills;
-      const radius = Math.max(200, 100 + (totalSkills * 5)); // スキル数に応じて半径を調整
-      const x = 250 + radius * Math.cos(angle);
-      const y = 250 + radius * Math.sin(angle);
+      const position = calculateCircleLayout(validLinkedSkills, index, {
+        baseRadius: 100, // フローチャート用に少し小さめのベース半径
+        increment: 5
+      });
+      const { x, y } = position;
       
       // カテゴリーに基づいて色を設定
       const targetSkillCategory = targetSkill.category?.name || '';

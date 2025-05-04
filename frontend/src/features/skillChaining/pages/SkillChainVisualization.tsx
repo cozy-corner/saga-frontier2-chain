@@ -5,8 +5,7 @@ import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { useCategories } from '@api/hooks/useCategories';
 import { useAllSkills } from '@api/hooks/useAllSkills';
 
-// Import the new component files
-import { SkillVisualizationHeader } from './SkillVisualizationHeader';
+// Import the component files
 import { CategoryFilter } from '../components/filters/CategoryFilter';
 import { SelectedCategoryTags } from '../components/filters/SelectedCategoryTags';
 import { VisualizationContent } from '../components/visualization/VisualizationContent';
@@ -66,23 +65,25 @@ export function SkillChainVisualization() {
   
   return (
     <div className="skill-visualization">
-      <SkillVisualizationHeader 
-        title={graphSkill ? `${graphSkill}の連携図` : 'スキル連携グラフ'}
-        onSelectSkill={handleSelectSkill}
-        allSkills={allSkills}
-        loading={isLoading}
-      />
+      <h2 className="skill-visualization-title">
+        {graphSkill ? `${graphSkill}の連携図` : 'スキル連携グラフ'}
+      </h2>
       
-      <CategoryFilter 
-        categories={availableCategories}
-        selectedCategories={selectedCategories}
-        setSelectedCategories={setSelectedCategories}
-      />
-      
-      <SelectedCategoryTags 
-        selectedCategories={selectedCategories}
-        onRemoveCategory={handleRemoveCategory}
-      />
+      {/* スキルが選択されている場合のみフィルターを表示 */}
+      {graphSkill && (
+        <>
+          <CategoryFilter 
+            categories={availableCategories}
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+          />
+          
+          <SelectedCategoryTags 
+            selectedCategories={selectedCategories}
+            onRemoveCategory={handleRemoveCategory}
+          />
+        </>
+      )}
       
       {/* スキル積み上げ表示コンポーネント */}
       <StackedSkills
@@ -93,6 +94,7 @@ export function SkillChainVisualization() {
       <VisualizationContent 
         graphSkill={graphSkill}
         selectedCategories={selectedCategories}
+        allCategories={availableCategories}
         onSkillSelect={handleSelectSkill}
       />
       
