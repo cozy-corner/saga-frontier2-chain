@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCategoryColor } from './categoryColors';
+import { getCategoryColor } from '../../utils/categoryColors';
 
 interface SelectedCategoryTagsProps {
   selectedCategories: string[];
