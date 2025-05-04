@@ -46,7 +46,7 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
   
   return (
     <div className="stacked-skills-container">
-      <h3>積み上げたスキル</h3>
+      <h3>連携</h3>
       <div className="stacked-skills-list">
         {selectedSkillDetails.map((skill: SkillItem, index) => {
           // カテゴリ名を取得（文字列または未定義の場合はデフォルト値を使用）
