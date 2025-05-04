@@ -6,6 +6,7 @@ import { LinkedCategories } from '@features/skillChaining/components/filters/Lin
 import { SkillChainVisualization } from '@features/skillChaining/pages/SkillChainVisualization';
 import { ChainProvider, useChain } from '@features/skillChaining/context/ChainContext';
 import { GraphProvider } from '@features/skillChaining/context/GraphVisualizationContext';
+import { SkillStackProvider } from '@features/skillChaining/context/SkillStackContext';
 
 function ChainViewer() {
   const { state, dispatch } = useChain();
@@ -115,7 +116,9 @@ function App() {
           <ChainViewer />
         ) : (
           <GraphProvider>
-            <SkillChainVisualization />
+            <SkillStackProvider>
+              <SkillChainVisualization />
+            </SkillStackProvider>
           </GraphProvider>
         )}
       </MainLayout>
