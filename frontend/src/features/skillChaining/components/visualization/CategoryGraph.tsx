@@ -27,18 +27,7 @@ const CategoryNode = ({ data }: NodeProps<CategoryNodeData>) => {
       className="category-node"
       style={{ 
         background: data.color.bg, 
-        border: `2px solid ${data.color.border}`,
-        padding: '15px',
-        borderRadius: '50%',
-        width: 120,
-        height: 120,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        fontSize: '16px',
-        fontWeight: 'bold',
-        cursor: 'pointer'
+        border: `2px solid ${data.color.border}`
       }}
     >
       {data.label}
