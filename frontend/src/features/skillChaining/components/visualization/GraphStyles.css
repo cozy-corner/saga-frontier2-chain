@@ -31,6 +31,12 @@
 
 .skill-node {
   transition: transform 0.2s, box-shadow 0.2s;
+  padding: 10px;
+  border-radius: 5px;
+  width: 150px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
 }
 
 .skill-node:hover {
@@ -114,5 +120,11 @@
     width: 90px;
     height: 90px;
     font-size: 14px;
+  }
+  
+  .skill-node {
+    padding: 8px;
+    width: 120px;
+    font-size: 13px;
   }
 }
