@@ -1,8 +1,8 @@
 import React from 'react';
-import { useLinkedCategories } from '../../../../api/hooks/useLinkedCategories';
-import { LoadingIndicator } from '../../../../components/common/LoadingIndicator';
-import { ErrorMessage } from '../../../../components/common/ErrorMessage';
-import { List } from '../../../../components/ui/List';
+import { useLinkedCategories } from '@api/hooks/useLinkedCategories';
+import { LoadingIndicator } from '@components/common/LoadingIndicator';
+import { ErrorMessage } from '@components/common/ErrorMessage';
+import { List } from '@components/ui/List';
 
 interface LinkedCategoriesProps {
   skillName: string;
