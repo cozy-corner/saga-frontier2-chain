@@ -82,11 +82,6 @@ export function CategorySkillsGraph({
     });
   }, [skills, category]);
 
-  // すべてのノードを設定
-  const nodes = useMemo(() => {
-    return skillNodes;
-  }, [skillNodes]);
-
   // ノードクリックハンドラ
   const onNodeClick = (_: React.MouseEvent, node: Node) => {
     onSkillSelect(node.id as string);
@@ -100,7 +95,7 @@ export function CategorySkillsGraph({
     <div className="category-skills-graph" style={{ height: 600, width: '100%' }}>
       <h3 className="category-skills-title">{category}カテゴリーのスキル</h3>
       <ReactFlow
-        nodes={nodes}
+        nodes={skillNodes}
         edges={[]}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
