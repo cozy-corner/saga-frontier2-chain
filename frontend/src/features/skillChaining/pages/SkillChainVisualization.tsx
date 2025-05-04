@@ -1,19 +1,19 @@
 import React, { useState, useMemo } from 'react';
-import { useGraphVisualization } from './GraphVisualizationContext';
-import { ErrorMessage } from '../../components/common/ErrorMessage';
-import { LoadingIndicator } from '../../components/common/LoadingIndicator';
-import { useCategories } from '../../api/hooks/useCategories';
-import { useAllSkills } from '../../api/hooks/useAllSkills';
+import { useGraphVisualization } from '../context/GraphVisualizationContext';
+import { ErrorMessage } from '../../../components/common/ErrorMessage';
+import { LoadingIndicator } from '../../../components/common/LoadingIndicator';
+import { useCategories } from '../../../api/hooks/useCategories';
+import { useAllSkills } from '../../../api/hooks/useAllSkills';
 
 // Import the new component files
 import { SkillVisualizationHeader } from './SkillVisualizationHeader';
-import { CategoryFilter } from './CategoryFilter';
-import { SelectedCategoryTags } from './SelectedCategoryTags';
-import { VisualizationContent } from './VisualizationContent';
-import { VisualizationInfo } from './VisualizationInfo';
+import { CategoryFilter } from '../components/filters/CategoryFilter';
+import { SelectedCategoryTags } from '../components/filters/SelectedCategoryTags';
+import { VisualizationContent } from '../components/visualization/VisualizationContent';
+import { VisualizationInfo } from '../components/visualization/VisualizationInfo';
 
 // Import the CSS
-import './SkillChainStyles.css';
+import '../styles/SkillChainStyles.css';
 
 export function SkillChainVisualization() {
   const { state: graphState, setGraphSkill } = useGraphVisualization();
@@ -41,7 +41,7 @@ export function SkillChainVisualization() {
   };
 
   // カテゴリ削除ハンドラー
-  const handleRemoveCategory = (category: string) => {
+  const handleRemoveCategory = (category: string): void => {
     setSelectedCategories(prev => prev.filter(cat => cat !== category));
   };
   
