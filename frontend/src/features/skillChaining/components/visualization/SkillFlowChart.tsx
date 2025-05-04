@@ -37,7 +37,7 @@ const SkillNode = memo(({ data, selected }: NodeProps<SkillNodeData>) => {
   
   return (
     <div 
-      className={`node-with-badge skill-node ${selected ? 'selected' : ''}`} 
+      className={`graph-node-base node-with-badge skill-node ${selected ? 'selected' : ''}`} 
       style={{ 
         background: colors.bg, 
         border: `1px solid ${colors.border}`

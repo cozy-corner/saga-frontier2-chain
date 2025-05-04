@@ -25,7 +25,7 @@ interface CategoryNodeData {
 const CategoryNode = ({ data }: NodeProps<CategoryNodeData>) => {
   return (
     <div 
-      className="category-node"
+      className="graph-node-base category-node"
       style={{ 
         background: data.color.bg, 
         border: `2px solid ${data.color.border}`

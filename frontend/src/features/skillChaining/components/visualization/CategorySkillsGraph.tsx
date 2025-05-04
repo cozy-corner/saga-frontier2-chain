@@ -30,7 +30,7 @@ const SkillNode = ({ data }: NodeProps<SkillNodeData>) => {
   
   return (
     <div 
-      className="skill-node"
+      className="graph-node-base skill-node"
       style={{ 
         background: colors.bg, 
         border: `1px solid ${colors.border}`
