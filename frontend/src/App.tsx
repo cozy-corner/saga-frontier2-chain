@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { MainLayout } from './layouts/MainLayout';
-import { CategoryList } from './features/categories/CategoryList';
-import { SkillList } from './features/skills/SkillList';
-import { LinkedCategories } from './features/skillChaining/LinkedCategories';
-import { SkillChainVisualization } from './features/skillChaining/SkillChainVisualization';
-import { ChainProvider, useChain } from './features/skillChaining/ChainContext';
-import { GraphProvider } from './features/skillChaining/GraphVisualizationContext';
+import { MainLayout } from '@layouts/MainLayout';
+import { CategoryList } from '@features/categories/CategoryList';
+import { SkillList } from '@features/skills/SkillList';
+import { LinkedCategories } from '@features/skillChaining/components/filters/LinkedCategories';
+import { SkillChainVisualization } from '@features/skillChaining/pages/SkillChainVisualization';
+import { ChainProvider, useChain } from '@features/skillChaining/context/ChainContext';
+import { GraphProvider } from '@features/skillChaining/context/GraphVisualizationContext';
 
 function ChainViewer() {
   const { state, dispatch } = useChain();
