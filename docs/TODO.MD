@@ -8,6 +8,7 @@
 - [x] refactor: separate component
 - [x] feat: filter link skill count on gragh
 - [x] refactor: frondend directory
+- [x] feat: pile up skills
 - [] feat: reverse search
 - [] feat: sort categories
 - [] feat: batch damage
