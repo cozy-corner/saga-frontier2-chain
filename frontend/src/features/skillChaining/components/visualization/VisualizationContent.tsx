@@ -4,6 +4,12 @@ import { CategoryGraph } from './CategoryGraph';
 import { CategorySkillsGraph } from './CategorySkillsGraph';
 import './GraphStyles.css';
 
+enum DisplayMode {
+  CATEGORIES = 'categories',
+  SKILLS = 'skills',
+  FLOWCHART = 'flowchart'
+}
+
 interface VisualizationContentProps {
   graphSkill: string | null;
   selectedCategories: string[];
@@ -17,9 +23,9 @@ export const VisualizationContent: React.FC<VisualizationContentProps> = ({
   allCategories,
   onSkillSelect
 }) => {
-  // 表示モード: 'categories' -> 'skills' -> 'flowchart'
-  const [displayMode, setDisplayMode] = useState<'categories' | 'skills' | 'flowchart'>(
-    graphSkill ? 'flowchart' : 'categories'
+  // 表示モード: カテゴリー -> スキル -> フローチャート
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(
+    graphSkill ? DisplayMode.FLOWCHART : DisplayMode.CATEGORIES
   );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -34,27 +40,27 @@ export const VisualizationContent: React.FC<VisualizationContentProps> = ({
   // graphSkillが変わった時の処理
   useEffect(() => {
     if (graphSkill) {
-      setDisplayMode('flowchart');
-    } else if (!graphSkill && displayModeRef.current === 'flowchart') {
-      setDisplayMode('categories');
+      setDisplayMode(DisplayMode.FLOWCHART);
+    } else if (!graphSkill && displayModeRef.current === DisplayMode.FLOWCHART) {
+      setDisplayMode(DisplayMode.CATEGORIES);
     }
   }, [graphSkill]);
 
   // カテゴリー選択ハンドラ
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
-    setDisplayMode('skills');
+    setDisplayMode(DisplayMode.SKILLS);
   };
 
   // スキル選択ハンドラ
   const handleSkillSelect = (skillName: string) => {
     onSkillSelect(skillName);
-    setDisplayMode('flowchart');
+    setDisplayMode(DisplayMode.FLOWCHART);
   };
 
   return (
     <div className="visualization-container">
-      {displayMode === 'categories' ? (
+      {displayMode === DisplayMode.CATEGORIES ? (
         <>
           <CategoryGraph 
             categories={allCategories} 
@@ -66,12 +72,12 @@ export const VisualizationContent: React.FC<VisualizationContentProps> = ({
             </p>
           </div>
         </>
-      ) : displayMode === 'skills' && selectedCategory ? (
+      ) : displayMode === DisplayMode.SKILLS && selectedCategory ? (
         <CategorySkillsGraph 
           category={selectedCategory} 
           onSkillSelect={handleSkillSelect}
         />
-      ) : displayMode === 'flowchart' && graphSkill ? (
+      ) : displayMode === DisplayMode.FLOWCHART && graphSkill ? (
         <SkillFlowChart 
           skillName={graphSkill} 
           selectedCategories={selectedCategories}
