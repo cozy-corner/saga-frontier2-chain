@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { calculateCircleLayout } from '@features/skillChaining/utils/graphLayout';
 import ReactFlow, { 
   Node, 
   Background, 
@@ -53,11 +54,7 @@ export function CategoryGraph({ categories, onCategorySelect }: CategoryGraphPro
   const nodes = useMemo<Node[]>(() => {
     return categories.map((category, index) => {
       // 円形に配置する計算
-      const totalCategories = categories.length;
-      const angle = (index * 2 * Math.PI) / totalCategories;
-      const radius = Math.max(200, 150 + (totalCategories * 5)); // カテゴリー数に応じて半径を調整
-      const x = 250 + radius * Math.cos(angle);
-      const y = 250 + radius * Math.sin(angle);
+      const position = calculateCircleLayout(categories, index);
       
       const colors = getCategoryColor(category);
       
@@ -68,7 +65,7 @@ export function CategoryGraph({ categories, onCategorySelect }: CategoryGraphPro
           label: category,
           color: colors
         },
-        position: { x, y }
+        position: position
       };
     });
   }, [categories]);
