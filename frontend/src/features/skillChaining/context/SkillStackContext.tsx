@@ -22,11 +22,6 @@ function skillStackReducer(state: SkillStackState, action: SkillStackAction): Sk
         console.warn('Attempted to add an empty skill name');
         return state;
       }
-
-      // すでに選択されているスキルの場合は何もしない
-      if (state.selectedSkills.includes(action.payload)) {
-        return state;
-      }
       
       // 新しいスキルを追加、最大数を超える場合は古いスキルを削除
       const newSkills = [...state.selectedSkills, action.payload];
