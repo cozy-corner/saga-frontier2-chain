@@ -95,7 +95,7 @@ function App() {
   return (
     <ChainProvider>
       <MainLayout>
-        <h1>SaGa Frontier2 術・技連携ビジュアライザー</h1>
+        <h1>SaGa Frontier2 連携ビジュアライザー</h1>
         <div className="view-toggle">
           <button 
             style={viewMode === 'list' ? activeStyle : inactiveStyle}
