@@ -55,13 +55,21 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
           
           return (
             <div
-              key={`${skill.name}-${index}`}
+              key={index}
               className="stacked-skill-item"
+              role="button"
+              tabIndex={0}
+              aria-label={`Select skill ${skill.name}`}
               style={{
                 backgroundColor: colors.bg,
                 borderColor: colors.border,
               }}
               onClick={() => handleSkillClick(skill.name, index)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleSkillClick(skill.name, index);
+                }
+              }}
             >
               <span className="skill-name">{skill.name}</span>
             </div>

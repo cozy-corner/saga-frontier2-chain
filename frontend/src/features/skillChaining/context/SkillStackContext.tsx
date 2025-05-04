@@ -18,6 +18,11 @@ const initialState: SkillStackState = {
 function skillStackReducer(state: SkillStackState, action: SkillStackAction): SkillStackState {
   switch (action.type) {
     case 'ADD_SKILL': {
+      if (!action.payload.trim()) {
+        console.warn('Attempted to add an empty skill name');
+        return state;
+      }
+
       // すでに選択されているスキルの場合は何もしない
       if (state.selectedSkills.includes(action.payload)) {
         return state;
@@ -32,6 +37,12 @@ function skillStackReducer(state: SkillStackState, action: SkillStackAction): Sk
     }
     
     case 'REMOVE_SKILL': {
+      // 空のスキル名のバリデーション
+      if (!action.payload.trim()) {
+        console.warn('Attempted to remove an empty skill name');
+        return state;
+      }
+      
       return {
         ...state,
         selectedSkills: state.selectedSkills.filter(skill => skill !== action.payload)
@@ -43,6 +54,12 @@ function skillStackReducer(state: SkillStackState, action: SkillStackAction): Sk
     }
     
     case 'SELECT_STACK_SKILL': {
+      // インデックスの範囲チェック
+      if (action.payload < 0 || action.payload >= state.selectedSkills.length) {
+        console.warn(`Invalid index: ${action.payload}. Stack size: ${state.selectedSkills.length}`);
+        return state;
+      }
+      
       // スタック内の指定されたインデックスまでのスキルのみを保持
       return {
         ...state,
