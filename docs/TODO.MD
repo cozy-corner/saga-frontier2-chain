@@ -10,7 +10,7 @@
 - [x] refactor: frondend directory
 - [x] feat: pile up skills
 - [x] feat: remove search box
-- [] fix: add same skill to linked box
+- [x] fix: add same skill to linked box
 - [] fix: add first skill to linked box
 - [] feat: reverse search
 - [] feat: sort categories
