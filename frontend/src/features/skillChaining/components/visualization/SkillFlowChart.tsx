@@ -15,10 +15,10 @@ import ReactFlow, {
   NodeTypes,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { useLinkedSkills } from '../../../../api/hooks/useLinkedSkills';
-import { LoadingIndicator } from '../../../../components/common/LoadingIndicator';
-import { ErrorMessage } from '../../../../components/common/ErrorMessage';
-import { getCategoryColor } from '../../utils/categoryColors';
+import { useLinkedSkills } from '@api/hooks/useLinkedSkills';
+import { LoadingIndicator } from '@components/common/LoadingIndicator';
+import { ErrorMessage } from '@components/common/ErrorMessage';
+import { getCategoryColor } from '@features/skillChaining/utils/categoryColors';
 import './SkillFlowChart.css';
 
 // スキルノードのデータ型を拡張

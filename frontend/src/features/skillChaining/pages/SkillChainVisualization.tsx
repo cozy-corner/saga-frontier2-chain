@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { useGraphVisualization } from '../context/GraphVisualizationContext';
-import { ErrorMessage } from '../../../components/common/ErrorMessage';
-import { LoadingIndicator } from '../../../components/common/LoadingIndicator';
-import { useCategories } from '../../../api/hooks/useCategories';
-import { useAllSkills } from '../../../api/hooks/useAllSkills';
+import { useGraphVisualization } from '@features/skillChaining/context/GraphVisualizationContext';
+import { ErrorMessage } from '@components/common/ErrorMessage';
+import { LoadingIndicator } from '@components/common/LoadingIndicator';
+import { useCategories } from '@api/hooks/useCategories';
+import { useAllSkills } from '@api/hooks/useAllSkills';
 
 // Import the new component files
 import { SkillVisualizationHeader } from './SkillVisualizationHeader';
