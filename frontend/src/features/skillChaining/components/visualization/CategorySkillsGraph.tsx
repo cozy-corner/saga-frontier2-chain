@@ -1,0 +1,125 @@
+import React, { useMemo } from 'react';
+import ReactFlow, { 
+  Node, 
+  Background, 
+  Controls, 
+  MiniMap, 
+  NodeTypes,
+  NodeProps, 
+  Handle,
+  Position
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import { useSkillsByCategory } from '@api/hooks/useSkillsByCategory';
+import { getCategoryColor } from '@features/skillChaining/utils/categoryColors';
+import { LoadingIndicator } from '@components/common/LoadingIndicator';
+import { ErrorMessage } from '@components/common/ErrorMessage';
+import { Skill } from '@api/types';
+import './GraphStyles.css';
+
+// スキルノードのデータ型
+interface SkillNodeData {
+  label: string;
+  category: string;
+}
+
+// カスタムスキルノードコンポーネント
+const SkillNode = ({ data }: NodeProps<SkillNodeData>) => {
+  const colors = getCategoryColor(data.category);
+  
+  return (
+    <div 
+      className="skill-node"
+      style={{ 
+        background: colors.bg, 
+        border: `1px solid ${colors.border}`,
+        padding: '10px',
+        borderRadius: '5px',
+        width: 150,
+        textAlign: 'center',
+        position: 'relative',
+        cursor: 'pointer'
+      }}
+    >
+      <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
+      <div>{data.label}</div>
+      <Handle type="source" position={Position.Bottom} style={{ background: colors.border }} />
+    </div>
+  );
+};
+
+// displayNameを追加
+SkillNode.displayName = 'SkillNode';
+
+interface CategorySkillsGraphProps {
+  category: string;
+  onSkillSelect: (skillName: string) => void;
+}
+
+export function CategorySkillsGraph({ 
+  category, 
+  onSkillSelect 
+}: CategorySkillsGraphProps) {
+  const { skills, loading, error } = useSkillsByCategory(category);
+  
+  // カスタムノードタイプの定義
+  const nodeTypes = useMemo<NodeTypes>(() => ({
+    skillNode: SkillNode
+  }), []);
+  
+  // スキルをノードに変換
+  const skillNodes = useMemo<Node[]>(() => {
+    if (!skills || skills.length === 0) return [];
+    
+    return skills.map((skill: Skill, index: number) => {
+      // 円形に配置する計算
+      const totalSkills = skills.length;
+      const angle = (index * 2 * Math.PI) / totalSkills;
+      const radius = Math.max(200, 150 + (totalSkills * 5)); // スキル数に応じて半径を調整
+      const x = 250 + radius * Math.cos(angle);
+      const y = 250 + radius * Math.sin(angle);
+      
+      return {
+        id: skill.name,
+        type: 'skillNode',
+        data: { 
+          label: skill.name,
+          category: category
+        },
+        position: { x, y }
+      };
+    });
+  }, [skills, category]);
+
+  // すべてのノードを設定
+  const nodes = useMemo(() => {
+    return skillNodes;
+  }, [skillNodes]);
+
+  // ノードクリックハンドラ
+  const onNodeClick = (_: React.MouseEvent, node: Node) => {
+    onSkillSelect(node.id as string);
+  };
+
+  if (loading) return <div className="loading-container"><LoadingIndicator /></div>;
+  if (error) return <div className="error-container"><ErrorMessage message={error?.message || 'エラーが発生しました'} /></div>;
+  if (skills.length === 0) return <div className="empty-container">このカテゴリーにスキルがありません。</div>;
+
+  return (
+    <div className="category-skills-graph" style={{ height: 600, width: '100%' }}>
+      <h3 className="category-skills-title">{category}カテゴリーのスキル</h3>
+      <ReactFlow
+        nodes={nodes}
+        edges={[]}
+        onNodeClick={onNodeClick}
+        nodeTypes={nodeTypes}
+        fitView
+        fitViewOptions={{ padding: 0.5 }}
+      >
+        <Controls />
+        <Background />
+        <MiniMap />
+      </ReactFlow>
+    </div>
+  );
+}
