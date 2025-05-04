@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { calculateCircleLayout } from '@features/skillChaining/utils/graphLayout';
 import ReactFlow, { 
   Node, 
   Background, 
@@ -73,11 +74,7 @@ export function CategorySkillsGraph({
     
     return skills.map((skill: Skill, index: number) => {
       // 円形に配置する計算
-      const totalSkills = skills.length;
-      const angle = (index * 2 * Math.PI) / totalSkills;
-      const radius = Math.max(200, 150 + (totalSkills * 5)); // スキル数に応じて半径を調整
-      const x = 250 + radius * Math.cos(angle);
-      const y = 250 + radius * Math.sin(angle);
+      const position = calculateCircleLayout(skills, index);
       
       return {
         id: skill.name,
@@ -86,7 +83,7 @@ export function CategorySkillsGraph({
           label: skill.name,
           category: category
         },
-        position: { x, y }
+        position: position
       };
     });
   }, [skills, category]);
