@@ -14,7 +14,7 @@
 - [x] fix: add first skill to linked box
 - [x] other: remove list display
 - [x] fix: don't stack skill when clicking center skill
-- [] refactor: remove unused code
+- [x] refactor: remove unused code
 - [] refactor: frontend directory
 - [] other: add frontend test
 - [] feat: filter minor categories
