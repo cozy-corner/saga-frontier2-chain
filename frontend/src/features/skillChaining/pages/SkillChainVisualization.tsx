@@ -1,20 +1,20 @@
 import React, { useState, useMemo } from 'react';
-import { useGraphVisualization } from '@features/skillChaining/context/GraphVisualizationContext';
-import { useSkillStack } from '@features/skillChaining/context/SkillStackContext';
+import { useGraphVisualization } from '@features/skillChaining/state/GraphVisualizationContext';
+import { useSkillStack } from '@features/skillChaining/state/SkillStackContext';
 import { ErrorMessage } from '@components/common/ErrorMessage';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { useCategories } from '@api/hooks/useCategories';
 import { useAllSkills } from '@api/hooks/useAllSkills';
 
 // Import the component files
-import { CategoryFilter } from '../components/filters/CategoryFilter';
-import { SelectedCategoryTags } from '../components/filters/SelectedCategoryTags';
-import { VisualizationContent } from '../components/visualization/VisualizationContent';
-import { VisualizationInfo } from '../components/visualization/VisualizationInfo';
-import { StackedSkills } from '../components/visualization/StackedSkills';
+import { CategoryFilter } from '../categories/filters/CategoryFilter';
+import { SelectedCategoryTags } from '../categories/filters/SelectedCategoryTags';
+import { VisualizationContent } from '../graph/components/VisualizationContent';
+import { VisualizationInfo } from '../graph/components/VisualizationInfo';
+import { StackedSkills } from '../skills/stacking/StackedSkills';
 
 // Import the CSS
-import '../styles/SkillChainStyles.css';
+import '../SkillChainStyles.css';
 
 export function SkillChainVisualization() {
   const { state: graphState, setGraphSkill } = useGraphVisualization();

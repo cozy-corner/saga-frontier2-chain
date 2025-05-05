@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SkillFlowChart } from './SkillFlowChart';
-import { CategoryGraph } from './CategoryGraph';
-import { CategorySkillsGraph } from './CategorySkillsGraph';
+import { SkillFlowChart } from '../../skills/components/SkillFlowChart';
+import { CategoryGraph } from '../../categories/components/CategoryGraph';
+import { CategorySkillsGraph } from '../../categories/components/CategorySkillsGraph';
 import './GraphStyles.css';
 
 enum DisplayMode {
