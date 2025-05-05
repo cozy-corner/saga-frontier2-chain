@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useGraphVisualization } from '@features/skillChaining/context/GraphVisualizationContext';
+import { useSkillStack } from '@features/skillChaining/context/SkillStackContext';
 import { ErrorMessage } from '@components/common/ErrorMessage';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { useCategories } from '@api/hooks/useCategories';
@@ -18,6 +19,7 @@ import '../styles/SkillChainStyles.css';
 export function SkillChainVisualization() {
   const { state: graphState, setGraphSkill } = useGraphVisualization();
   const { graphSkill } = graphState;
+  const { dispatch } = useSkillStack();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   
   // 全カテゴリを取得
@@ -38,6 +40,9 @@ export function SkillChainVisualization() {
   // スキル選択ハンドラー
   const handleSelectSkill = (skillName: string) => {
     setGraphSkill(skillName);
+    
+    // 同じスキルも複数回追加できるようにする (例: 骨砕き > 骨砕き)
+    dispatch({ type: 'ADD_SKILL', payload: skillName });
   };
 
   // カテゴリ削除ハンドラー
