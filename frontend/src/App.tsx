@@ -1,9 +1,9 @@
 import { MainLayout } from '@layouts/MainLayout';
 import { SkillChainVisualization } from '@features/skillChaining/pages/SkillChainVisualization';
-import { GraphProvider } from '@features/skillChaining/context/GraphVisualizationContext';
-import { SkillStackProvider } from '@features/skillChaining/context/SkillStackContext';
+import { GraphProvider } from '@features/skillChaining/state/GraphVisualizationContext';
+import { SkillStackProvider } from '@features/skillChaining/state/SkillStackContext';
 
-import { ChainProvider } from '@features/skillChaining/context/ChainContext';
+import { ChainProvider } from '@features/skillChaining/state/ChainContext';
 
 function App() {
   return (

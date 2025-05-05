@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
-import { calculateCircleLayout } from '@features/skillChaining/utils/graphLayout';
+import { calculateCircleLayout } from '@features/skillChaining/graph/utils/graphLayout';
 import ReactFlow, {
   Node,
   Edge,
@@ -19,7 +19,7 @@ import 'reactflow/dist/style.css';
 import { useLinkedSkills } from '@api/hooks/useLinkedSkills';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
-import { getCategoryColor } from '@features/skillChaining/utils/categoryColors';
+import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 import './SkillFlowChart.css';
 
 // スキルノードのデータ型を拡張
