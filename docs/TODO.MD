@@ -12,6 +12,8 @@
 - [x] feat: remove search box
 - [x] fix: add same skill to linked box
 - [x] fix: add first skill to linked box
+- [x] other: remove list display
+- [] feat: show badge when selecting categories
 - [] feat: reverse search
 - [] feat: sort categories
 - [] feat: batch damage
