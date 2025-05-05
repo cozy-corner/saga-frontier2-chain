@@ -11,7 +11,7 @@
 - [x] feat: pile up skills
 - [x] feat: remove search box
 - [x] fix: add same skill to linked box
-- [] fix: add first skill to linked box
+- [x] fix: add first skill to linked box
 - [] feat: reverse search
 - [] feat: sort categories
 - [] feat: batch damage
