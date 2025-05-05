@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { useSkillStack } from '@features/skillChaining/context/SkillStackContext';
-import { getCategoryColor } from '@features/skillChaining/utils/categoryColors';
+import { useSkillStack } from '@features/skillChaining/state/SkillStackContext';
+import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 
 // シンプルなスキルアイテムの型定義
 interface SkillItem {
