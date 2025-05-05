@@ -58,7 +58,7 @@ SkillNode.displayName = 'SkillNode';
 interface SkillFlowChartProps {
   skillName: string;
   selectedCategories?: string[];
-  onSkillSelect?: (skillName: string) => void;
+  onSkillSelect?: (skillName: string, shouldAddToChain: boolean) => void;
 }
 
 export function SkillFlowChart({ 
@@ -156,7 +156,7 @@ export function SkillFlowChart({
     // 中心ノード（選択されたスキル）
     // 中心スキルのリンク数はlinkedSkillsの長さ（このスキルからリンクしているスキル数）
     const centerNode: Node = {
-      id: sourceSkillName,
+      id: `source_${sourceSkillName}`, // ソース/起点としての接頭辞を追加
       type: 'skillNode', // カスタムノードタイプを指定
       data: { 
         label: sourceSkillName,
@@ -288,8 +288,11 @@ export function SkillFlowChart({
       if (typeof clickedSkillName === 'string') {
         console.log(`スキル選択: ${clickedSkillName}`);
         
+        // ノードのIDに「source_」が含まれているかで判断
+        const shouldAddToChain = !node.id.toString().startsWith('source_');
+        
         if (onSkillSelect) {
-          onSkillSelect(clickedSkillName);
+          onSkillSelect(clickedSkillName, shouldAddToChain);
         }
       } else {
         console.warn('無効なスキル名でクリックされました:', node);
