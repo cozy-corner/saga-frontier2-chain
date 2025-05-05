@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCategoryColor } from '../../utils/categoryColors';
+import { getCategoryColor } from '../hooks/categoryColors';
 
 interface CategoryFilterProps {
   categories: string[];

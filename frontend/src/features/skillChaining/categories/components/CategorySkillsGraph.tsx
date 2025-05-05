@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { calculateCircleLayout } from '@features/skillChaining/utils/graphLayout';
+import { calculateCircleLayout } from '@features/skillChaining/graph/utils/graphLayout';
 import ReactFlow, { 
   Node, 
   Background, 
@@ -12,11 +12,11 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useSkillsByCategory } from '@api/hooks/useSkillsByCategory';
-import { getCategoryColor } from '@features/skillChaining/utils/categoryColors';
+import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
 import { Skill } from '@api/types';
-import './GraphStyles.css';
+import '@features/skillChaining/graph/components/GraphStyles.css';
 
 // スキルノードのデータ型
 interface SkillNodeData {

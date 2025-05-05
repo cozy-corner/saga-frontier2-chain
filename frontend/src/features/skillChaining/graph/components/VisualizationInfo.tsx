@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCategoryColor } from '../../utils/categoryColors';
+import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 
 interface VisualizationInfoProps {
   categories: string[];
