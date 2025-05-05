@@ -14,10 +14,16 @@
 - [x] fix: add first skill to linked box
 - [x] other: remove list display
 - [x] fix: don't stack skill when clicking center skill
+- [] feat: filter minor categories
 - [] feat: show badge when selecting categories
-- [] feat: reverse search
-- [] feat: sort categories
-- [] feat: batch damage
-- [] feat: batch special effect
-- [] feat: sort skills by damage
+- [] feat: sort by categories
+- [] feat: batch cost
+- [] feat: sort skills by cost
 - [] refactor: Consider moving connection details to environment variables for security and flexibility
+- [] feat: show linked name
+- [] feat: batch special effect
+- [] other: font
+- [] other: style and design
+- [] other: deploy on google cloud
+- [] feat: save linkage
+- [] feat: reverse search
