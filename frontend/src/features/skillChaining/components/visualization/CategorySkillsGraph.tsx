@@ -48,7 +48,7 @@ SkillNode.displayName = 'SkillNode';
 
 interface CategorySkillsGraphProps {
   category: string;
-  onSkillSelect: (skillName: string) => void;
+  onSkillSelect: (skillName: string, shouldAddToChain: boolean) => void;
 }
 
 export function CategorySkillsGraph({ 
@@ -84,7 +84,7 @@ export function CategorySkillsGraph({
 
   // ノードクリックハンドラ
   const onNodeClick = (_: React.MouseEvent, node: Node) => {
-    onSkillSelect(node.id as string);
+    onSkillSelect(node.id as string, true); // カテゴリグラフからのスキル選択は常に連携に追加する
   };
 
   if (loading) return <div className="loading-container"><LoadingIndicator /></div>;
