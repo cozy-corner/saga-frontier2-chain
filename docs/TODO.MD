@@ -7,7 +7,7 @@
 - [x] feat: filter by categories on gragh
 - [x] refactor: separate component
 - [x] feat: filter link skill count on gragh
-- [x] refactor: frondend directory
+- [x] refactor: frontend directory
 - [x] feat: pile up skills
 - [x] feat: remove search box
 - [x] fix: add same skill to linked box
@@ -15,7 +15,7 @@
 - [x] other: remove list display
 - [x] fix: don't stack skill when clicking center skill
 - [x] refactor: remove unused code
-- [] refactor: frontend directory
+- [x] refactor: frontend directory
 - [] other: add frontend test
 - [] feat: filter minor categories
 - [] feat: show badge when selecting categories
