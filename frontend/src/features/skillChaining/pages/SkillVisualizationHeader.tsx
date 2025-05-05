@@ -1,5 +1,5 @@
 import React from 'react';
-import { SmartSearch } from '@features/skillChaining/components/visualization/SmartSearch';
+import { SmartSearch } from '@features/skillChaining/skills/components/SmartSearch';
 import { SkillWithCategory } from '@api/hooks/useAllSkills';
 
 // Define SkillSuggestion to match what SmartSearch expects
