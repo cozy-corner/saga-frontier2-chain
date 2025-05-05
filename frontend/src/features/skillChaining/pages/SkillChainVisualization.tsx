@@ -38,11 +38,15 @@ export function SkillChainVisualization() {
   }, [categories]);
   
   // スキル選択ハンドラー
-  const handleSelectSkill = (skillName: string) => {
+  const handleSelectSkill = (skillName: string, shouldAddToChain: boolean = true) => {
     setGraphSkill(skillName);
     
-    // 同じスキルも複数回追加できるようにする (例: 骨砕き > 骨砕き)
-    dispatch({ type: 'ADD_SKILL', payload: skillName });
+    // 連携チェーンに追加すべき場合のみスタックに追加する
+    // これにより、中央ノード（現在表示中のスキル）をクリックしても追加されなくなる
+    if (shouldAddToChain) {
+      // 同じスキルも複数回追加できるようにする (例: 骨砕き > 骨砕き)
+      dispatch({ type: 'ADD_SKILL', payload: skillName });
+    }
   };
 
   // カテゴリ削除ハンドラー

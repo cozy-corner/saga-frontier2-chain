@@ -10,7 +10,7 @@ interface SkillItem {
 
 interface StackedSkillsProps {
   allSkills: SkillItem[];
-  onSkillClick?: (skillName: string) => void;
+  onSkillClick?: (skillName: string, shouldAddToChain?: boolean) => void;
 }
 
 export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
@@ -35,8 +35,9 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
     dispatch({ type: 'SELECT_STACK_SKILL', payload: index });
     
     // 選択したスキルの詳細ビューを表示する場合
+    // スタック内でクリックした場合は常にチェーンに追加しない
     if (onSkillClick) {
-      onSkillClick(skillName);
+      onSkillClick(skillName, false);
     }
   }, [dispatch, onSkillClick]);
   

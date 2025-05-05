@@ -13,6 +13,7 @@
 - [x] fix: add same skill to linked box
 - [x] fix: add first skill to linked box
 - [x] other: remove list display
+- [x] fix: don't stack skill when clicking center skill
 - [] feat: show badge when selecting categories
 - [] feat: reverse search
 - [] feat: sort categories

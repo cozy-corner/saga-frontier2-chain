@@ -14,7 +14,7 @@ interface VisualizationContentProps {
   graphSkill: string | null;
   selectedCategories: string[];
   allCategories: string[];
-  onSkillSelect: (skillName: string) => void;
+  onSkillSelect: (skillName: string, shouldAddToChain: boolean) => void;
 }
 
 export const VisualizationContent: React.FC<VisualizationContentProps> = ({
@@ -53,8 +53,8 @@ export const VisualizationContent: React.FC<VisualizationContentProps> = ({
   };
 
   // スキル選択ハンドラ
-  const handleSkillSelect = (skillName: string) => {
-    onSkillSelect(skillName);
+  const handleSkillSelect = (skillName: string, shouldAddToChain: boolean = true) => {
+    onSkillSelect(skillName, shouldAddToChain);
     setDisplayMode(DisplayMode.FLOWCHART);
   };
 
