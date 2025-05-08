@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 
-interface SkillStackState {
+export interface SkillStackState {
   selectedSkills: string[]; // スキル名の配列
 }
 
@@ -15,7 +15,7 @@ const initialState: SkillStackState = {
   selectedSkills: []
 };
 
-function skillStackReducer(state: SkillStackState, action: SkillStackAction): SkillStackState {
+export function skillStackReducer(state: SkillStackState, action: SkillStackAction): SkillStackState {
   switch (action.type) {
     case 'ADD_SKILL': {
       if (!action.payload.trim()) {
