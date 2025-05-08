@@ -8,7 +8,6 @@ import {
 import type { SkillStackState } from '../SkillStackContext';
 import React, { ReactNode } from 'react';
 
-// テスト用のスキルデータ
 const TEST_SKILLS = {
   体術: ['裏拳', '胴抜き', '熊掌打', 'ボコボコ', '鬼走り'],
   剣: ['切り返し', '十字切り', '追突剣', '払い抜け', 'スマッシュ'],
