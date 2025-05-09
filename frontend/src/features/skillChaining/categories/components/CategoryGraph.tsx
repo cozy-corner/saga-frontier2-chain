@@ -46,7 +46,6 @@ export function CategoryGraph({ categories, onCategorySelect }: CategoryGraphPro
     categoryNode: CategoryNode
   }), []);
 
-  // カテゴリーをノードに変換
   const nodes = useMemo<Node[]>(() => {
     return categories.map((category, index) => {
       // 円形に配置する計算

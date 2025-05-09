@@ -1,6 +1,5 @@
 // backend/src/model/types.ts
 
-// Define interfaces that will be implemented by the classes
 export interface SkillType {
   name: string;
   category?: CategoryType;
