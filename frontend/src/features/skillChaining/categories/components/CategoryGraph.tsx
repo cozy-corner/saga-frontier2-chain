@@ -12,7 +12,6 @@ import 'reactflow/dist/style.css';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 import '@features/skillChaining/graph/components/GraphStyles.css';
 
-// カテゴリーノードのデータ型
 interface CategoryNodeData {
   label: string;
   color: {
@@ -21,7 +20,6 @@ interface CategoryNodeData {
   }
 }
 
-// カスタムカテゴリーノードコンポーネント
 const CategoryNode = ({ data }: NodeProps<CategoryNodeData>) => {
   return (
     <div 
@@ -36,7 +34,6 @@ const CategoryNode = ({ data }: NodeProps<CategoryNodeData>) => {
   );
 };
 
-// displayNameを追加
 CategoryNode.displayName = 'CategoryNode';
 
 interface CategoryGraphProps {
@@ -45,7 +42,6 @@ interface CategoryGraphProps {
 }
 
 export function CategoryGraph({ categories, onCategorySelect }: CategoryGraphProps) {
-  // カスタムノードタイプの定義
   const nodeTypes = useMemo<NodeTypes>(() => ({
     categoryNode: CategoryNode
   }), []);
@@ -70,7 +66,6 @@ export function CategoryGraph({ categories, onCategorySelect }: CategoryGraphPro
     });
   }, [categories]);
 
-  // ノードクリックハンドラ
   const onNodeClick = (_: React.MouseEvent, node: Node) => {
     onCategorySelect(node.id as string);
   };
