@@ -17,6 +17,7 @@ export const typeDefs = gql`
   type Category {
     name: String!
     skills: [Skill!]! # Skills belonging to this category
+    order: Int!
   }
 
   type Skill {
