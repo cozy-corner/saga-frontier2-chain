@@ -5,25 +5,29 @@
 // Create index on Category.order for better query performance
 CREATE INDEX FOR (c:Category) ON (c.order);
 
-// Set order for weapon-type categories
-MATCH (c:Category {name: '体'}) SET c.order = 1;
-MATCH (c:Category {name: '杖'}) SET c.order = 2;
-MATCH (c:Category {name: '剣'}) SET c.order = 3;
-MATCH (c:Category {name: '槍'}) SET c.order = 4;
-MATCH (c:Category {name: '斧'}) SET c.order = 5;
-MATCH (c:Category {name: '弓'}) SET c.order = 6;
+// Batch set orders for all categories using UNWIND for better maintainability
+UNWIND [
+  {name: '体', order: 1},     // Body technique category
+  {name: '杖', order: 2},     // Staff category
+  {name: '剣', order: 3},     // Sword category
+  {name: '槍', order: 4},     // Spear category
+  {name: '斧', order: 5},     // Axe category
+  {name: '弓', order: 6},     // Bow category
+  {name: '合成術', order: 7}, // Synthesis magic category
+  {name: '基本術', order: 8}, // Basic magic category
+  {name: '固有術', order: 9}, // Unique magic category
+  {name: '固有技', order: 10}, // Unique skill category
+  {name: '敵', order: 11},    // Enemy category
+  {name: '', order: 99}       // Empty category (lowest priority)
+] AS cat
+MATCH (c:Category {name: cat.name})
+WHERE c.order IS NULL
+SET c.order = cat.order;
 
-// Set order for magical categories
-MATCH (c:Category {name: '合成術'}) SET c.order = 7;
-MATCH (c:Category {name: '基本術'}) SET c.order = 8;
-MATCH (c:Category {name: '固有術'}) SET c.order = 9;
-
-// Set order for other categories
-MATCH (c:Category {name: '固有技'}) SET c.order = 10;
-MATCH (c:Category {name: '敵'}) SET c.order = 11;
-
-// Set order for empty category (lowest priority, shown last)
-MATCH (c:Category {name: ''}) SET c.order = 99;
+// Set a default order for any new categories without an order
+MATCH (c:Category)
+WHERE c.order IS NULL
+SET c.order = 100;
 
 // Verify categories have been updated
 MATCH (c:Category)
