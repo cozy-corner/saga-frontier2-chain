@@ -16,10 +16,10 @@
 - [x] fix: don't stack skill when clicking center skill
 - [x] refactor: remove unused code
 - [x] refactor: frontend directory
-- [] other: add frontend test
+- [x] other: add frontend test
+- [] feat: sort by categories
 - [] feat: filter minor categories
 - [] feat: show badge when selecting categories
-- [] feat: sort by categories
 - [] feat: batch cost
 - [] feat: sort skills by cost
 - [] refactor: Consider moving connection details to environment variables for security and flexibility
