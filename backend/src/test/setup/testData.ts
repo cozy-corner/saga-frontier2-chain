@@ -5,9 +5,9 @@ import { CategoryType } from '../../model/types';
  * Test data for categories
  */
 export const testCategories: Omit<CategoryType, 'skills'>[] = [
-  { name: '体' }, // Body technique category
-  { name: '剣' }, // Sword category
-  { name: '斧' }, // Axe category
+  { name: '体', order: 1 }, // Body technique category
+  { name: '剣', order: 3 }, // Sword category
+  { name: '斧', order: 5 }, // Axe category
 ];
 
 /**
