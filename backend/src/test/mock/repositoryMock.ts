@@ -11,7 +11,8 @@ export function setupRepositoryMocks() {
   // Mock the repository functions directly to avoid session.close() issues
   jest.spyOn(repository, 'findAllCategories').mockImplementation(async (): Promise<CategoryType[]> => {
     return testCategories.map(cat => ({ 
-      name: cat.name, 
+      name: cat.name,
+      order: cat.order,
       skills: [] 
     }));
   });
@@ -20,7 +21,8 @@ export function setupRepositoryMocks() {
     const category = testCategories.find(c => c.name === name);
     if (!category) return null;
     return { 
-      name: category.name, 
+      name: category.name,
+      order: category.order, 
       skills: [] 
     };
   });
@@ -61,7 +63,8 @@ export function setupRepositoryMocks() {
     if (!category) return null;
     
     return { 
-      name: category.name, 
+      name: category.name,
+      order: category.order, 
       skills: [] 
     };
   });
@@ -94,10 +97,14 @@ export function setupRepositoryMocks() {
     const targetSkills = testSkills.filter(skill => targetSkillNames.includes(skill.name));
     const categoryNames = [...new Set(targetSkills.map(skill => skill.categoryName))];
     
-    return categoryNames.map(name => ({ 
-      name, 
-      skills: [] 
-    }));
+    return categoryNames.map(name => {
+      const category = testCategories.find(c => c.name === name);
+      return { 
+        name, 
+        order: category?.order || 0,
+        skills: [] 
+      };
+    });
   });
 
   jest.spyOn(repository, 'findLinkedToCategories').mockImplementation(async (skillName: string): Promise<CategoryType[]> => {
@@ -106,10 +113,14 @@ export function setupRepositoryMocks() {
     const sourceSkills = testSkills.filter(skill => sourceSkillNames.includes(skill.name));
     const categoryNames = [...new Set(sourceSkills.map(skill => skill.categoryName))];
     
-    return categoryNames.map(name => ({ 
-      name, 
-      skills: [] 
-    }));
+    return categoryNames.map(name => {
+      const category = testCategories.find(c => c.name === name);
+      return { 
+        name, 
+        order: category?.order || 0,
+        skills: [] 
+      };
+    });
   });
 
   // Leave getDriver mocked as a no-op since we're bypassing it
