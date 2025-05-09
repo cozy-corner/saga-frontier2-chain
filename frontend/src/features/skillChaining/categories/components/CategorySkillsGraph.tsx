@@ -43,7 +43,6 @@ const SkillNode = ({ data }: NodeProps<SkillNodeData>) => {
   );
 };
 
-// displayNameを追加
 SkillNode.displayName = 'SkillNode';
 
 interface CategorySkillsGraphProps {
@@ -57,7 +56,6 @@ export function CategorySkillsGraph({
 }: CategorySkillsGraphProps) {
   const { skills, loading, error } = useSkillsByCategory(category);
   
-  // カスタムノードタイプの定義
   const nodeTypes = useMemo<NodeTypes>(() => ({
     skillNode: SkillNode
   }), []);
@@ -82,7 +80,6 @@ export function CategorySkillsGraph({
     });
   }, [skills, category]);
 
-  // ノードクリックハンドラ
   const onNodeClick = (_: React.MouseEvent, node: Node) => {
     onSkillSelect(node.id as string, true); // カテゴリグラフからのスキル選択は常に連携に追加する
   };
