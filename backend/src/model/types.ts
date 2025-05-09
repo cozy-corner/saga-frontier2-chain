@@ -9,4 +9,5 @@ export interface SkillType {
 export interface CategoryType {
   name: string;
   skills: SkillType[];
+  order: number;
 }

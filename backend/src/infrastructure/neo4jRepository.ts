@@ -52,7 +52,8 @@ export const closeDriver = async (): Promise<void> => {
 const toCategoryType = (data: Record<string, unknown> | null): CategoryType | null => {
   if (!data) return null;
   return { 
-    name: data.name as string, 
+    name: data.name as string,
+    order: typeof data.order === 'number' ? data.order as number : 0, // Default to 0 if order is not set
     skills: [] // NOTE: Empty array is intentional. Skills are loaded on-demand by the GraphQL resolver
                // in schema.ts (Category.skills resolver) rather than eagerly loaded here.
   };
@@ -100,7 +101,7 @@ export const findAllCategories = async (): Promise<CategoryType[]> => {
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
-    const result = await session.run('MATCH (c:Category) RETURN c ORDER BY c.name');
+    const result = await session.run('MATCH (c:Category) RETURN c ORDER BY c.order, c.name');
     const rawData = extractNodePropsList(result.records, 'c');
     return rawData.map(data => toCategoryType(data)).filter((cat): cat is CategoryType => cat !== null);
   } finally {
@@ -249,7 +250,7 @@ export const findLinkedFromCategories = async (skillName: string): Promise<Categ
     try {
         const result = await session.run(
             `MATCH (s:Skill {name: $skillName})-[:LINKS_TO]->(:Skill)-[:BELONGS_TO]->(c:Category)
-             RETURN DISTINCT c ORDER BY c.name`,
+             RETURN DISTINCT c ORDER BY c.order, c.name`,
             { skillName }
         );
         const rawData = extractNodePropsList(result.records, 'c');
@@ -268,7 +269,7 @@ export const findLinkedToCategories = async (skillName: string): Promise<Categor
     try {
         const result = await session.run(
             `MATCH (s:Skill {name: $skillName})<-[:LINKS_TO]-(:Skill)-[:BELONGS_TO]->(c:Category)
-             RETURN DISTINCT c ORDER BY c.name`,
+             RETURN DISTINCT c ORDER BY c.order, c.name`,
             { skillName }
         );
         const rawData = extractNodePropsList(result.records, 'c');
