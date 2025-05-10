@@ -1,6 +1,9 @@
 import neo4j, { Driver, Record as Neo4jRecord } from 'neo4j-driver';
 import { SkillType, CategoryType } from '../model/types';
 
+// Define categories to be excluded from results
+const EXCLUDED_CATEGORIES = ['基本術', '固有技', '固有術', '敵'];
+
 // --- Neo4j Driver Setup ---
 
 // Consider moving connection details to environment variables for security and flexibility
@@ -95,13 +98,17 @@ const extractNodePropsList = (records: Neo4jRecord[], alias: string): Record<str
 // --- Repository Functions ---
 
 /**
- * Fetches all Category nodes.
+ * Fetches all Category nodes, excluding the specified categories.
  */
 export const findAllCategories = async (): Promise<CategoryType[]> => {
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
-    const result = await session.run('MATCH (c:Category) RETURN c ORDER BY c.order, c.name');
+    // Filter out excluded categories directly in the Cypher query
+    const result = await session.run(
+      'MATCH (c:Category) WHERE NOT c.name IN $excludedCategories RETURN c ORDER BY c.order, c.name',
+      { excludedCategories: EXCLUDED_CATEGORIES }
+    );
     const rawData = extractNodePropsList(result.records, 'c');
     return rawData.map(data => toCategoryType(data)).filter((cat): cat is CategoryType => cat !== null);
   } finally {
@@ -110,9 +117,14 @@ export const findAllCategories = async (): Promise<CategoryType[]> => {
 };
 
 /**
- * Fetches a specific Category node by name.
+ * Fetches a specific Category node by name, returns null if it belongs to excluded categories.
  */
 export const findCategoryByName = async (name: string): Promise<CategoryType | null> => {
+  // Immediately return null if the category is in the excluded list
+  if (EXCLUDED_CATEGORIES.includes(name)) {
+    return null;
+  }
+  
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
@@ -125,25 +137,32 @@ export const findCategoryByName = async (name: string): Promise<CategoryType | n
 };
 
 /**
- * Fetches Skill nodes, optionally filtered by category name.
+ * Fetches Skill nodes, optionally filtered by category name, excluding skills from excluded categories.
  */
 export const findSkills = async (categoryName?: string): Promise<SkillType[]> => {
+  // Immediately return empty array if the specified category is in the excluded list
+  if (categoryName && EXCLUDED_CATEGORIES.includes(categoryName)) {
+    return [];
+  }
+
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
     let query: string;
-    const params: { categoryName?: string } = {};
+    const params: { categoryName?: string, excludedCategories?: string[] } = {};
 
     if (categoryName) {
-      // Optional: Check if category exists first for better error handling
-      // const categoryCheck = await session.run('MATCH (c:Category {name: $categoryName}) RETURN c LIMIT 1', { categoryName });
-      // if (categoryCheck.records.length === 0) {
-      //     throw new Error(`Category "${categoryName}" not found.`);
-      // }
+      // Query skills for a specific category
       query = 'MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) RETURN s ORDER BY s.name';
       params.categoryName = categoryName;
     } else {
-      query = 'MATCH (s:Skill) RETURN s ORDER BY s.name';
+      // Query all skills, but exclude those from excluded categories
+      query = `
+        MATCH (s:Skill)-[:BELONGS_TO]->(c:Category)
+        WHERE NOT c.name IN $excludedCategories
+        RETURN s ORDER BY s.name
+      `;
+      params.excludedCategories = EXCLUDED_CATEGORIES;
     }
 
     const result = await session.run(query, params);
@@ -155,13 +174,30 @@ export const findSkills = async (categoryName?: string): Promise<SkillType[]> =>
 };
 
 /**
- * Fetches a specific Skill node by name.
+ * Fetches a specific Skill node by name, returns null if it belongs to an excluded category.
  */
 export const findSkillByName = async (name: string): Promise<SkillType | null> => {
   const currentDriver = getDriver();
   const session = currentDriver.session();
   try {
-    const result = await session.run('MATCH (s:Skill {name: $name}) RETURN s', { name });
+    // Modified query to also fetch the category to check for exclusions
+    const result = await session.run(
+      `MATCH (s:Skill {name: $name})-[:BELONGS_TO]->(c:Category)
+       RETURN s, c.name as categoryName`,
+      { name }
+    );
+    
+    // If no result found, return null
+    if (!result.records || result.records.length === 0) {
+      return null;
+    }
+    
+    // Check if the skill belongs to an excluded category
+    const categoryName = result.records[0].get('categoryName');
+    if (EXCLUDED_CATEGORIES.includes(categoryName)) {
+      return null;
+    }
+    
     const rawData = extractNodeProps(result.records[0], 's');
     return toSkillType(rawData);
   } finally {
@@ -170,7 +206,7 @@ export const findSkillByName = async (name: string): Promise<SkillType | null> =
 };
 
 /**
- * Fetches the Category a specific Skill belongs to.
+ * Fetches the Category a specific Skill belongs to, returns null if it's an excluded category.
  */
 export const findCategoryForSkill = async (skillName: string): Promise<CategoryType | null> => {
     const currentDriver = getDriver();
@@ -181,6 +217,13 @@ export const findCategoryForSkill = async (skillName: string): Promise<CategoryT
         { skillName }
       );
       const rawData = extractNodeProps(result.records[0], 'c');
+      if (!rawData) return null;
+      
+      // Return null if the category is in the excluded list
+      if (EXCLUDED_CATEGORIES.includes(rawData.name as string)) {
+        return null;
+      }
+      
       return toCategoryType(rawData);
     } finally {
       await session.close();
@@ -188,15 +231,17 @@ export const findCategoryForSkill = async (skillName: string): Promise<CategoryT
 };
 
 /**
- * Fetches Skills that a specific Skill links to.
+ * Fetches Skills that a specific Skill links to, excluding skills from excluded categories.
  */
 export const findSkillsLinkedFrom = async (skillName: string): Promise<SkillType[]> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
       const result = await session.run(
-        'MATCH (s:Skill {name: $skillName})-[:LINKS_TO]->(linked:Skill) RETURN linked ORDER BY linked.name',
-        { skillName }
+        `MATCH (s:Skill {name: $skillName})-[:LINKS_TO]->(linked:Skill)-[:BELONGS_TO]->(c:Category)
+         WHERE NOT c.name IN $excludedCategories
+         RETURN linked ORDER BY linked.name`,
+        { skillName, excludedCategories: EXCLUDED_CATEGORIES }
       );
       const rawData = extractNodePropsList(result.records, 'linked');
       return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
@@ -206,15 +251,17 @@ export const findSkillsLinkedFrom = async (skillName: string): Promise<SkillType
 };
 
 /**
- * Fetches Skills that link to a specific Skill.
+ * Fetches Skills that link to a specific Skill, excluding skills from excluded categories.
  */
 export const findSkillsLinkedTo = async (skillName: string): Promise<SkillType[]> => {
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
       const result = await session.run(
-        'MATCH (s:Skill {name: $skillName})<-[:LINKS_TO]-(linker:Skill) RETURN linker ORDER BY linker.name',
-        { skillName }
+        `MATCH (s:Skill {name: $skillName})<-[:LINKS_TO]-(linker:Skill)-[:BELONGS_TO]->(c:Category)
+         WHERE NOT c.name IN $excludedCategories
+         RETURN linker ORDER BY linker.name`,
+        { skillName, excludedCategories: EXCLUDED_CATEGORIES }
       );
       const rawData = extractNodePropsList(result.records, 'linker');
       return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
@@ -224,9 +271,14 @@ export const findSkillsLinkedTo = async (skillName: string): Promise<SkillType[]
 };
 
 /**
- * Fetches Skills belonging to a specific Category.
+ * Fetches Skills belonging to a specific Category, returns empty array for excluded categories.
  */
 export const findSkillsForCategory = async (categoryName: string): Promise<SkillType[]> => {
+    // Immediately return empty array if the category is in the excluded list
+    if (EXCLUDED_CATEGORIES.includes(categoryName)) {
+        return [];
+    }
+    
     const currentDriver = getDriver();
     const session = currentDriver.session();
     try {
@@ -242,7 +294,7 @@ export const findSkillsForCategory = async (categoryName: string): Promise<Skill
 };
 
 /**
- * Fetches distinct Categories of Skills linked *from* a specific Skill.
+ * Fetches distinct Categories of Skills linked *from* a specific Skill, excluding specified categories.
  */
 export const findLinkedFromCategories = async (skillName: string): Promise<CategoryType[]> => {
     const currentDriver = getDriver();
@@ -250,8 +302,9 @@ export const findLinkedFromCategories = async (skillName: string): Promise<Categ
     try {
         const result = await session.run(
             `MATCH (s:Skill {name: $skillName})-[:LINKS_TO]->(:Skill)-[:BELONGS_TO]->(c:Category)
+             WHERE NOT c.name IN $excludedCategories
              RETURN DISTINCT c ORDER BY c.order, c.name`,
-            { skillName }
+            { skillName, excludedCategories: EXCLUDED_CATEGORIES }
         );
         const rawData = extractNodePropsList(result.records, 'c');
         return rawData.map(data => toCategoryType(data)).filter((cat): cat is CategoryType => cat !== null);
@@ -261,7 +314,7 @@ export const findLinkedFromCategories = async (skillName: string): Promise<Categ
 };
 
 /**
- * Fetches distinct Categories of Skills linked *to* a specific Skill.
+ * Fetches distinct Categories of Skills linked *to* a specific Skill, excluding specified categories.
  */
 export const findLinkedToCategories = async (skillName: string): Promise<CategoryType[]> => {
     const currentDriver = getDriver();
@@ -269,8 +322,9 @@ export const findLinkedToCategories = async (skillName: string): Promise<Categor
     try {
         const result = await session.run(
             `MATCH (s:Skill {name: $skillName})<-[:LINKS_TO]-(:Skill)-[:BELONGS_TO]->(c:Category)
+             WHERE NOT c.name IN $excludedCategories
              RETURN DISTINCT c ORDER BY c.order, c.name`,
-            { skillName }
+            { skillName, excludedCategories: EXCLUDED_CATEGORIES }
         );
         const rawData = extractNodePropsList(result.records, 'c');
         return rawData.map(data => toCategoryType(data)).filter((cat): cat is CategoryType => cat !== null);
