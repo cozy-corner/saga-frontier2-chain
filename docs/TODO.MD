@@ -20,6 +20,8 @@
 - [x] feat: sort by categories
 - [x] feat: filter minor categories
 - [] feat: sort skills by cateogry
+　- [] feat: frontend query and type
+　- [] feat: sort on graph
 - [] feat: show badge when selecting categories
 - [] feat: batch cost
 - [] feat: sort skills by category and cost
