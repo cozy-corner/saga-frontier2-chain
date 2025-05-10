@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
-import { useAllSkills, SkillWithCategory } from '../useAllSkills';
-import { ApolloProvider } from '@apollo/client';
+import { renderHook } from '@testing-library/react';
+import { SkillWithCategory } from '../useAllSkills';
 
 describe('useAllSkills', () => {
   it('スキルがカテゴリのorder順にソートされる', async () => {

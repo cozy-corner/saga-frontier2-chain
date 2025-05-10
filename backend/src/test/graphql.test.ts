@@ -241,10 +241,10 @@ describe('GraphQL Schema', () => {
       expect(result.data?.linkedSkills).toHaveLength(expectedLinkedSkills.length);
       
       // Check each linked skill has its category order correctly set
-      result.data?.linkedSkills.forEach((skill: any) => {
+      result.data?.linkedSkills.forEach((skill: SkillType) => {
         const expectedSkill = expectedLinkedSkills.find(e => e.name === skill.name);
-        expect(skill.category.name).toBe(expectedSkill?.categoryName);
-        expect(skill.category.order).toBe(expectedSkill?.categoryOrder);
+        expect(skill.category!.name).toBe(expectedSkill?.categoryName);
+        expect(skill.category!.order).toBe(expectedSkill?.categoryOrder);
       });
     });
   });
