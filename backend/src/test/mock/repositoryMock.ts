@@ -32,26 +32,48 @@ export function setupRepositoryMocks() {
     if (categoryName) {
       filteredSkills = testSkills.filter(skill => skill.categoryName === categoryName);
     }
-    return filteredSkills.map(skill => ({ 
-      name: skill.name, 
-      linksTo: [] 
-    }));
+    return filteredSkills.map(skill => {
+      const category = testCategories.find(c => c.name === skill.categoryName);
+      return { 
+        name: skill.name, 
+        linksTo: [],
+        category: {
+          name: skill.categoryName,
+          order: category?.order || 0,
+          skills: []
+        }
+      };
+    });
   });
 
   jest.spyOn(repository, 'findSkillByName').mockImplementation(async (name: string): Promise<SkillType | null> => {
     const skill = testSkills.find(s => s.name === name);
     if (!skill) return null;
+    
+    const category = testCategories.find(c => c.name === skill.categoryName);
     return { 
       name: skill.name, 
-      linksTo: [] 
+      linksTo: [],
+      category: {
+        name: skill.categoryName,
+        order: category?.order || 0,
+        skills: []
+      }
     };
   });
 
   jest.spyOn(repository, 'findSkillsForCategory').mockImplementation(async (categoryName: string): Promise<SkillType[]> => {
     const skills = testSkills.filter(skill => skill.categoryName === categoryName);
+    const category = testCategories.find(c => c.name === categoryName);
+    
     return skills.map(skill => ({ 
       name: skill.name, 
-      linksTo: [] 
+      linksTo: [],
+      category: {
+        name: categoryName,
+        order: category?.order || 0,
+        skills: []
+      }
     }));
   });
 
@@ -74,10 +96,18 @@ export function setupRepositoryMocks() {
     const targetSkillNames = links.map(link => link.targetSkill);
     const linkedSkills = testSkills.filter(skill => targetSkillNames.includes(skill.name));
     
-    return linkedSkills.map(skill => ({ 
-      name: skill.name, 
-      linksTo: [] 
-    }));
+    return linkedSkills.map(skill => {
+      const category = testCategories.find(c => c.name === skill.categoryName);
+      return { 
+        name: skill.name, 
+        linksTo: [],
+        category: {
+          name: skill.categoryName,
+          order: category?.order || 0,
+          skills: []
+        }
+      };
+    });
   });
 
   jest.spyOn(repository, 'findSkillsLinkedTo').mockImplementation(async (skillName: string): Promise<SkillType[]> => {
@@ -85,10 +115,18 @@ export function setupRepositoryMocks() {
     const sourceSkillNames = links.map(link => link.sourceSkill);
     const linkedSkills = testSkills.filter(skill => sourceSkillNames.includes(skill.name));
     
-    return linkedSkills.map(skill => ({ 
-      name: skill.name, 
-      linksTo: [] 
-    }));
+    return linkedSkills.map(skill => {
+      const category = testCategories.find(c => c.name === skill.categoryName);
+      return { 
+        name: skill.name, 
+        linksTo: [],
+        category: {
+          name: skill.categoryName,
+          order: category?.order || 0,
+          skills: []
+        }
+      };
+    });
   });
 
   jest.spyOn(repository, 'findLinkedFromCategories').mockImplementation(async (skillName: string): Promise<CategoryType[]> => {
