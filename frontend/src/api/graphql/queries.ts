@@ -5,6 +5,7 @@ export const GET_CATEGORIES = gql`
   query GetCategories {
     categories {
       name
+      order
     }
   }
 `;
@@ -14,6 +15,7 @@ export const GET_SKILLS_BY_CATEGORY = gql`
   query GetSkillsByCategory($categoryName: String!) {
     category(name: $categoryName) {
       name
+      order
       skills {
         name
       }
@@ -29,6 +31,7 @@ export const GET_SKILL_LINKED_CATEGORIES = gql`
     }
     linkedFromCategories(skillName: $skillName) {
       name
+      order
     }
   }
 `;
@@ -50,6 +53,7 @@ export const GET_LINKED_SKILLS_BY_CATEGORY = gql`
     }
     category(name: $categoryName) {
       name
+      order
     }
   }
 `;
@@ -61,6 +65,7 @@ export const GET_LINKED_SKILLS = gql`
       name
       category {
         name
+        order
       }
       linksTo {
         name
