@@ -7,6 +7,7 @@ import { CategoriesQueryResult, CategoryQueryResult } from '../types';
 export interface SkillWithCategory {
   name: string;
   category?: string;
+  categoryOrder?: number;
 }
 
 export function useAllSkills() {
@@ -45,15 +46,17 @@ export function useAllSkills() {
         
         results.forEach((result, index) => {
           const category = categoriesData.categories[index];
+          const categoryOrder = category.order ?? 999; // orderがない場合は大きな値をデフォルトとする
           
           if (result.status === 'fulfilled' && result.value.data?.category?.skills) {
             const formattedSkills = result.value.data.category.skills.map(skill => ({
               name: skill.name,
-              category: category.name
+              category: category.name,
+              categoryOrder: categoryOrder
             }));
             
             allSkillsList.push(...formattedSkills);
-            console.log(`カテゴリ「${category.name}」のスキル ${formattedSkills.length}件を追加`);
+            console.log(`カテゴリ「${category.name}」(order: ${categoryOrder})のスキル ${formattedSkills.length}件を追加`);
           } else if (result.status === 'rejected') {
             console.error(`カテゴリ「${category.name}」のスキル取得エラー:`, result.reason);
           }

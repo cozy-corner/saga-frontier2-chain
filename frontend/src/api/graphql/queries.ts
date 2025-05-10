@@ -45,6 +45,7 @@ export const GET_LINKED_SKILLS_BY_CATEGORY = gql`
         name
         category {
           name
+          order
         }
         linksTo {
           name

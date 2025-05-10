@@ -26,11 +26,12 @@ describe('GraphQL Schema', () => {
   });
   
   describe('Queries', () => {
-    test('categories query returns all categories', async () => {
+    test('categories query returns all categories with order field', async () => {
       const query = `
         query {
           categories {
             name
+            order
           }
         }
       `;
@@ -42,6 +43,14 @@ describe('GraphQL Schema', () => {
       
       const categoryNames = result.data?.categories.map((c: CategoryType) => c.name);
       expect(categoryNames).toEqual(expect.arrayContaining(testCategories.map(c => c.name)));
+      
+      // Verify order field is present and matches expected values
+      const resultCategoriesMap = new Map(result.data?.categories.map((c: CategoryType) => [c.name, c]));
+      testCategories.forEach(testCat => {
+        const resultCat = resultCategoriesMap.get(testCat.name) as CategoryType;
+        expect(resultCat).toBeDefined();
+        expect(resultCat.order).toBe(testCat.order);
+      });
     });
     
     test('category query returns a specific category', async () => {
@@ -194,12 +203,58 @@ describe('GraphQL Schema', () => {
       const linkedSkillNames = result.data?.linkedSkills.map((s: SkillType) => s.name);
       expect(linkedSkillNames).toEqual(expect.arrayContaining(expectedLinkedSkills));
     });
+
+    test('linkedSkills query returns linked skills with category order', async () => {
+      const skillName = '裏拳';
+      
+      // Find all skills linked from '裏拳'
+      const expectedLinkedSkills = testLinkage
+        .filter(link => link.sourceSkill === skillName)
+        .map(link => {
+          const targetSkill = testSkills.find(s => s.name === link.targetSkill);
+          const category = testCategories.find(c => c.name === targetSkill?.categoryName);
+          return {
+            name: link.targetSkill,
+            categoryName: targetSkill?.categoryName,
+            categoryOrder: category?.order
+          };
+        });
+      
+      const query = `
+        query GetAllLinkedSkillsWithCategoryOrder($skillName: String!) {
+          linkedSkills(skillName: $skillName) {
+            name
+            category {
+              name
+              order
+            }
+          }
+        }
+      `;
+      
+      const result = await server.executeOperation({
+        query,
+        variables: { skillName },
+      });
+      
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.linkedSkills).toHaveLength(expectedLinkedSkills.length);
+      
+      // Check each linked skill has its category order correctly set
+      result.data?.linkedSkills.forEach((skill: SkillType) => {
+        const expectedSkill = expectedLinkedSkills.find(e => e.name === skill.name);
+        expect(skill.category!.name).toBe(expectedSkill?.categoryName);
+        expect(skill.category!.order).toBe(expectedSkill?.categoryOrder);
+      });
+    });
   });
   
   describe('Nested resolvers', () => {
-    test('Skill.category resolver returns the category a skill belongs to', async () => {
+    test('Skill.category resolver returns the category a skill belongs to with order field', async () => {
       const skillName = '裏拳';
-      const expectedCategoryName = testSkills.find(s => s.name === skillName)?.categoryName;
+      const expectedSkill = testSkills.find(s => s.name === skillName);
+      const expectedCategoryName = expectedSkill?.categoryName;
+      const expectedCategory = testCategories.find(c => c.name === expectedCategoryName);
       
       const query = `
         query GetSkillWithCategory($name: String!) {
@@ -207,6 +262,7 @@ describe('GraphQL Schema', () => {
             name
             category {
               name
+              order
             }
           }
         }
@@ -220,6 +276,7 @@ describe('GraphQL Schema', () => {
       expect(result.errors).toBeUndefined();
       expect(result.data?.skill.category).not.toBeNull();
       expect(result.data?.skill.category.name).toBe(expectedCategoryName);
+      expect(result.data?.skill.category.order).toBe(expectedCategory?.order);
     });
     
     test('Skill.linksTo resolver returns skills that a skill links to', async () => {

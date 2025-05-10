@@ -84,7 +84,7 @@ describe('Neo4j Repository', () => {
   });
   
   describe('Relationship operations', () => {
-    test('findCategoryForSkill returns the correct category', async () => {
+    test('findCategoryForSkill returns the correct category with order field', async () => {
       const skillName = '裏拳';
       const expectedCategory = testCategories.find(c => 
         c.name === testSkills.find(s => s.name === skillName)?.categoryName
@@ -94,6 +94,7 @@ describe('Neo4j Repository', () => {
       
       expect(category).not.toBeNull();
       expect(category?.name).toBe(expectedCategory?.name);
+      expect(category?.order).toBe(expectedCategory?.order);
     });
     
     test('findSkillsLinkedFrom returns skills that a skill links to', async () => {
@@ -139,6 +140,35 @@ describe('Neo4j Repository', () => {
       
       expect(categories).toHaveLength(expectedCategories.length);
       expect(categories.map(c => c.name)).toEqual(expect.arrayContaining(expectedCategories));
+    });
+    
+    test('findLinkedFromCategories returns categories with order fields', async () => {
+      const skillName = '裏拳';
+      // Find skills linked from '裏拳'
+      const linkedSkillNames = testLinkage
+        .filter(link => link.sourceSkill === skillName)
+        .map(link => link.targetSkill);
+        
+      // Find categories and their orders
+      const expectedCategoriesWithOrders = [...new Set(
+        testSkills
+          .filter(skill => linkedSkillNames.includes(skill.name))
+          .map(skill => {
+            const category = testCategories.find(c => c.name === skill.categoryName);
+            return {
+              name: skill.categoryName,
+              order: category?.order
+            };
+          })
+      )];
+      
+      const categories = await repository.findLinkedFromCategories(skillName);
+      
+      // Check returned categories include order fields
+      categories.forEach(category => {
+        const expectedCategory = expectedCategoriesWithOrders.find(c => c.name === category.name);
+        expect(category.order).toBe(expectedCategory?.order);
+      });
     });
     
     test('findLinkedToCategories returns distinct categories of skills linked to', async () => {
