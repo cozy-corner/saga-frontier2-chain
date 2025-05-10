@@ -18,7 +18,7 @@
 - [x] refactor: frontend directory
 - [x] other: add frontend test
 - [x] feat: sort by categories
-- [] feat: filter minor categories
+- [x] feat: filter minor categories
 - [] feat: show badge when selecting categories
 - [] feat: batch cost
 - [] feat: sort skills by cost
