@@ -19,14 +19,16 @@
 - [x] other: add frontend test
 - [x] feat: sort by categories
 - [x] feat: filter minor categories
+- [] feat: sort skills by cateogry
 - [] feat: show badge when selecting categories
 - [] feat: batch cost
-- [] feat: sort skills by cost
-- [] refactor: Consider moving connection details to environment variables for security and flexibility
+- [] feat: sort skills by category and cost
 - [] feat: show linked name
 - [] feat: batch special effect
 - [] other: font
 - [] other: style and design
 - [] other: deploy on google cloud
+- [] other: use neo4j migration tool
 - [] feat: save linkage
 - [] feat: reverse search
+- [] refactor: Consider moving connection details to environment variables for security and flexibility
