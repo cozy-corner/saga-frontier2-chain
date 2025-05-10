@@ -17,7 +17,7 @@
 - [x] refactor: remove unused code
 - [x] refactor: frontend directory
 - [x] other: add frontend test
-- [] feat: sort by categories
+- [x] feat: sort by categories
 - [] feat: filter minor categories
 - [] feat: show badge when selecting categories
 - [] feat: batch cost
