@@ -31,12 +31,9 @@ export function useLinkedSkills(sourceSkillName: string | null, categoryName: st
   const error = errorWithCategory || errorWithoutCategory;
   
   // データソースの選択
-  let linkedSkills = [];
-  if (categoryName) {
-    linkedSkills = dataWithCategory?.skill?.linksTo || [];
-  } else {
-    linkedSkills = dataWithoutCategory?.linkedSkills || [];
-  }
+  const linkedSkills = categoryName 
+    ? dataWithCategory?.skill?.linksTo || [] 
+    : dataWithoutCategory?.linkedSkills || [];
   
   return {
     loading,
