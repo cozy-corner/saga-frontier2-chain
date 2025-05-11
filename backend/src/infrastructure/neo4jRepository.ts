@@ -94,6 +94,30 @@ const extractNodePropsList = (records: Neo4jRecord[], alias: string): Record<str
     return records.map(record => extractNodeProps(record, alias)).filter(props => props !== null);
 };
 
+/**
+ * Converts a Neo4j Record to a SkillType object with category information.
+ * @param record - The Neo4j Record object.
+ * @param alias - The alias used for the node in the Cypher query (e.g., 's', 'linked', 'linker').
+ * @returns The SkillType object or null if conversion fails.
+ */
+const recordToSkill = (record: Neo4jRecord, alias: string): SkillType | null => {
+  const skillProps = extractNodeProps(record, alias);
+  if (!skillProps) return null;
+
+  const categoryName  = record.get('categoryName')  as string;
+  const categoryOrder = record.get('categoryOrder') as number | undefined;
+
+  const skill = toSkillType(skillProps);
+  if (!skill) return null;
+
+  skill.category = {
+    name  : categoryName,
+    order : typeof categoryOrder === 'number' ? categoryOrder : 0,
+    skills: [],
+  };
+  return skill;
+};
+
 
 // --- Repository Functions ---
 
@@ -173,25 +197,9 @@ export const findSkills = async (categoryName?: string): Promise<SkillType[]> =>
     const result = await session.run(query, params);
     
     // Process results to include category information
-    const skills: SkillType[] = [];
-    result.records.forEach(record => {
-      const skillProps = extractNodeProps(record, 's');
-      if (skillProps) {
-        const categoryName = record.get('categoryName');
-        const categoryOrder = record.get('categoryOrder');
-        
-        const skill = toSkillType(skillProps);
-        if (skill) {
-          // Add category information to the skill
-          skill.category = {
-            name: categoryName,
-            order: categoryOrder,
-            skills: []
-          };
-          skills.push(skill);
-        }
-      }
-    });
+    const skills = result.records
+      .map(r => recordToSkill(r, 's'))
+      .filter((s): s is SkillType => s !== null);
     
     return skills;
   } finally {
@@ -224,20 +232,7 @@ export const findSkillByName = async (name: string): Promise<SkillType | null> =
       return null;
     }
     
-    const rawData = extractNodeProps(result.records[0], 's');
-    const categoryOrder = result.records[0].get('categoryOrder');
-    
-    const skill = toSkillType(rawData);
-    if (skill) {
-      // Add category information to the skill
-      skill.category = {
-        name: categoryName,
-        order: categoryOrder,
-        skills: []
-      };
-    }
-    
-    return skill;
+    return recordToSkill(result.records[0], 's');
   } finally {
     await session.close();
   }
@@ -284,25 +279,9 @@ export const findSkillsLinkedFrom = async (skillName: string): Promise<SkillType
       );
       
       // Process results to include category information
-      const skills: SkillType[] = [];
-      result.records.forEach(record => {
-        const skillProps = extractNodeProps(record, 'linked');
-        if (skillProps) {
-          const categoryName = record.get('categoryName');
-          const categoryOrder = record.get('categoryOrder');
-          
-          const skill = toSkillType(skillProps);
-          if (skill) {
-            // Add category information to the skill
-            skill.category = {
-              name: categoryName,
-              order: categoryOrder,
-              skills: []
-            };
-            skills.push(skill);
-          }
-        }
-      });
+      const skills = result.records
+        .map(r => recordToSkill(r, 'linked'))
+        .filter((s): s is SkillType => s !== null);
       
       return skills;
     } finally {
@@ -326,25 +305,9 @@ export const findSkillsLinkedTo = async (skillName: string): Promise<SkillType[]
       );
       
       // Process results to include category information
-      const skills: SkillType[] = [];
-      result.records.forEach(record => {
-        const skillProps = extractNodeProps(record, 'linker');
-        if (skillProps) {
-          const categoryName = record.get('categoryName');
-          const categoryOrder = record.get('categoryOrder');
-          
-          const skill = toSkillType(skillProps);
-          if (skill) {
-            // Add category information to the skill
-            skill.category = {
-              name: categoryName,
-              order: categoryOrder,
-              skills: []
-            };
-            skills.push(skill);
-          }
-        }
-      });
+      const skills = result.records
+        .map(r => recordToSkill(r, 'linker'))
+        .filter((s): s is SkillType => s !== null);
       
       return skills;
     } finally {
@@ -371,25 +334,9 @@ export const findSkillsForCategory = async (categoryName: string): Promise<Skill
         );
         
         // Process results to include category information
-        const skills: SkillType[] = [];
-        result.records.forEach(record => {
-          const skillProps = extractNodeProps(record, 's');
-          if (skillProps) {
-            const categoryName = record.get('categoryName');
-            const categoryOrder = record.get('categoryOrder');
-            
-            const skill = toSkillType(skillProps);
-            if (skill) {
-              // Add category information to the skill
-              skill.category = {
-                name: categoryName,
-                order: categoryOrder,
-                skills: []
-              };
-              skills.push(skill);
-            }
-          }
-        });
+        const skills = result.records
+          .map(r => recordToSkill(r, 's'))
+          .filter((s): s is SkillType => s !== null);
         
         return skills;
     } finally {
