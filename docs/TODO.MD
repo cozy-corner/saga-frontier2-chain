@@ -20,6 +20,8 @@
 - [x] feat: sort by categories
 - [x] feat: filter minor categories
 - [x] feat: sort skills by cateogry
+- [x] other: update README
+- [] other: use neo4j migration tool
 - [] feat: show badge when selecting categories
 - [] feat: batch cost
 - [] feat: sort skills by category and cost
@@ -28,7 +30,6 @@
 - [] other: font
 - [] other: style and design
 - [] other: deploy on google cloud
-- [] other: use neo4j migration tool
 - [] feat: save linkage
 - [] feat: reverse search
 - [] refactor: Consider moving connection details to environment variables for security and flexibility
