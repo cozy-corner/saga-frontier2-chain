@@ -94,6 +94,30 @@ const extractNodePropsList = (records: Neo4jRecord[], alias: string): Record<str
     return records.map(record => extractNodeProps(record, alias)).filter(props => props !== null);
 };
 
+/**
+ * Converts a Neo4j Record to a SkillType object with category information.
+ * @param record - The Neo4j Record object.
+ * @param alias - The alias used for the node in the Cypher query (e.g., 's', 'linked', 'linker').
+ * @returns The SkillType object or null if conversion fails.
+ */
+const recordToSkill = (record: Neo4jRecord, alias: string): SkillType | null => {
+  const skillProps = extractNodeProps(record, alias);
+  if (!skillProps) return null;
+
+  const categoryName  = record.get('categoryName')  as string;
+  const categoryOrder = record.get('categoryOrder') as number | undefined;
+
+  const skill = toSkillType(skillProps);
+  if (!skill) return null;
+
+  skill.category = {
+    name  : categoryName,
+    order : typeof categoryOrder === 'number' ? categoryOrder : 0,
+    skills: [],
+  };
+  return skill;
+};
+
 
 // --- Repository Functions ---
 
@@ -153,21 +177,31 @@ export const findSkills = async (categoryName?: string): Promise<SkillType[]> =>
 
     if (categoryName) {
       // Query skills for a specific category
-      query = 'MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) RETURN s ORDER BY s.name';
+      query = `
+        MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) 
+        RETURN s, c.name AS categoryName, c.order AS categoryOrder 
+        ORDER BY s.name
+      `;
       params.categoryName = categoryName;
     } else {
       // Query all skills, but exclude those from excluded categories
       query = `
         MATCH (s:Skill)-[:BELONGS_TO]->(c:Category)
         WHERE NOT c.name IN $excludedCategories
-        RETURN s ORDER BY s.name
+        RETURN s, c.name AS categoryName, c.order AS categoryOrder
+        ORDER BY c.order, s.name
       `;
       params.excludedCategories = EXCLUDED_CATEGORIES;
     }
 
     const result = await session.run(query, params);
-    const rawData = extractNodePropsList(result.records, 's');
-    return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
+    
+    // Process results to include category information
+    const skills = result.records
+      .map(r => recordToSkill(r, 's'))
+      .filter((s): s is SkillType => s !== null);
+    
+    return skills;
   } finally {
     await session.close();
   }
@@ -183,7 +217,7 @@ export const findSkillByName = async (name: string): Promise<SkillType | null> =
     // Modified query to also fetch the category to check for exclusions
     const result = await session.run(
       `MATCH (s:Skill {name: $name})-[:BELONGS_TO]->(c:Category)
-       RETURN s, c.name as categoryName`,
+       RETURN s, c.name AS categoryName, c.order AS categoryOrder`,
       { name }
     );
     
@@ -198,8 +232,7 @@ export const findSkillByName = async (name: string): Promise<SkillType | null> =
       return null;
     }
     
-    const rawData = extractNodeProps(result.records[0], 's');
-    return toSkillType(rawData);
+    return recordToSkill(result.records[0], 's');
   } finally {
     await session.close();
   }
@@ -240,11 +273,17 @@ export const findSkillsLinkedFrom = async (skillName: string): Promise<SkillType
       const result = await session.run(
         `MATCH (s:Skill {name: $skillName})-[:LINKS_TO]->(linked:Skill)-[:BELONGS_TO]->(c:Category)
          WHERE NOT c.name IN $excludedCategories
-         RETURN linked ORDER BY linked.name`,
+         RETURN linked, c.name AS categoryName, c.order AS categoryOrder
+         ORDER BY c.order, linked.name`,
         { skillName, excludedCategories: EXCLUDED_CATEGORIES }
       );
-      const rawData = extractNodePropsList(result.records, 'linked');
-      return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
+      
+      // Process results to include category information
+      const skills = result.records
+        .map(r => recordToSkill(r, 'linked'))
+        .filter((s): s is SkillType => s !== null);
+      
+      return skills;
     } finally {
       await session.close();
     }
@@ -260,11 +299,17 @@ export const findSkillsLinkedTo = async (skillName: string): Promise<SkillType[]
       const result = await session.run(
         `MATCH (s:Skill {name: $skillName})<-[:LINKS_TO]-(linker:Skill)-[:BELONGS_TO]->(c:Category)
          WHERE NOT c.name IN $excludedCategories
-         RETURN linker ORDER BY linker.name`,
+         RETURN linker, c.name AS categoryName, c.order AS categoryOrder
+         ORDER BY c.order, linker.name`,
         { skillName, excludedCategories: EXCLUDED_CATEGORIES }
       );
-      const rawData = extractNodePropsList(result.records, 'linker');
-      return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
+      
+      // Process results to include category information
+      const skills = result.records
+        .map(r => recordToSkill(r, 'linker'))
+        .filter((s): s is SkillType => s !== null);
+      
+      return skills;
     } finally {
       await session.close();
     }
@@ -283,11 +328,17 @@ export const findSkillsForCategory = async (categoryName: string): Promise<Skill
     const session = currentDriver.session();
     try {
         const result = await session.run(
-            'MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) RETURN s ORDER BY s.name',
+            `MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) 
+            RETURN s, c.name AS categoryName, c.order AS categoryOrder ORDER BY s.name`,
             { categoryName }
         );
-        const rawData = extractNodePropsList(result.records, 's');
-        return rawData.map(data => toSkillType(data)).filter((skill): skill is SkillType => skill !== null);
+        
+        // Process results to include category information
+        const skills = result.records
+          .map(r => recordToSkill(r, 's'))
+          .filter((s): s is SkillType => s !== null);
+        
+        return skills;
     } finally {
         await session.close();
     }

@@ -81,10 +81,12 @@ export function SkillFlowChart({
     if (selectedCategories.length === 0) return linkedSkills;
     
     // 選択されたカテゴリに属するスキルのみをフィルタリング
-    return linkedSkills.filter(skill => {
+    const filtered = linkedSkills.filter(skill => {
       const skillCategory = skill.category?.name || '';
       return selectedCategories.includes(skillCategory);
     });
+    
+    return filtered;
   }, [linkedSkills, selectedCategories]);
   
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -93,12 +95,6 @@ export function SkillFlowChart({
   
     // スキルデータからノードとエッジを生成
   useEffect(() => {
-    console.log('スキル名:', sourceSkillName);
-    console.log('選択カテゴリ:', selectedCategories);
-    console.log('連携スキルデータ:', JSON.stringify(linkedSkills, null, 2));
-    console.log('フィルタリング後のスキル数:', filteredSkills.length);
-    console.log('ローディング状態:', loading);
-    console.log('エラー状態:', error?.message);
     
     // データチェック: 空の場合や読み込み中は処理しない
     if (loading) return;
@@ -138,18 +134,6 @@ export function SkillFlowChart({
       return true;
     });
     
-    console.log('有効なスキル数:', validLinkedSkills.length);
-    console.log('フィルタリング状態:', selectedCategories.length > 0 ? 'カテゴリでフィルター中' : 'フィルターなし');
-    
-    // スキルごとの詳細情報をログに出力
-    validLinkedSkills.forEach((targetSkill, index) => {
-      console.log(`スキル ${index + 1}:`, {
-        名前: targetSkill.name,
-        カテゴリ: targetSkill.category?.name || 'カテゴリなし',
-        データ構造: JSON.stringify(targetSkill)
-      });
-    });
-    
     const newNodes: Node[] = [];
     const newEdges: Edge[] = [];
     
@@ -179,8 +163,6 @@ export function SkillFlowChart({
       // カテゴリーに基づいて色を設定
       const targetSkillCategory = targetSkill.category?.name || '';
       const colors = getCategoryColor(targetSkillCategory);
-      
-      console.log(`スキル "${targetSkill.name}" のカテゴリ: ${targetSkillCategory}, 色: ${colors.bg}`);
       
       // スキル名は一意なので、そのままIDとして使用
       const targetSkillName = targetSkill.name;
@@ -286,7 +268,6 @@ export function SkillFlowChart({
       // ノードデータからスキル名を取得（IDからではなく）
       const clickedSkillName = node.data?.label;
       if (typeof clickedSkillName === 'string') {
-        console.log(`スキル選択: ${clickedSkillName}`);
         
         // ノードのIDに「source_」が含まれているかで判断
         const shouldAddToChain = !node.id.toString().startsWith('source_');
