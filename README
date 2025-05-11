@@ -1,24 +1,107 @@
-:
 # SaGa Frontier2 連携可視化・検索ツール
 
-このプロジェクトは、Neo4j を用いて ゲーム「SaGa Frontier2」 に登場する術・技同士の連携をグラフ構造で管理し、Node.js（TypeScript） + GraphQL + React フロントエンドからそれを操作・可視化するフルスタックアプリケーションです。
+このプロジェクトは、ゲーム「SaGa Frontier2」に登場する術・技同士の連携をグラフ構造で管理し、それを操作・可視化するフルスタックアプリケーションです。
 
 ---
 
-## 📦 構成
+## 📋 概要
+
+- グラフデータベース（Neo4j）を使用して、ゲーム内のスキル連携を視覚的に表現
+- スキルをカテゴリーごとにフィルタリングし、連携関係を探索可能
+- スキルを選択して連携チェーンを構築する機能
+- カテゴリベースのフィルタリングとグラフ可視化
+- スキルスタッキング機能により連携チェーンを構築
+
+---
+
+## 🏗️ アーキテクチャ
+
+### システムコンポーネント構成
+
+```mermaid
+graph TD
+    subgraph Client[Frontend - React App]
+        UI[UI Components]
+        QL[Apollo Client]
+        Context[React Context]
+        Hooks[Custom Hooks]
+    end
+    
+    subgraph Server[Backend - Node.js]
+        GQL[GraphQL Server]
+        Repo[Repository Layer]
+    end
+    
+    subgraph DB[Database]
+        Neo4j[Neo4j Graph DB]
+    end
+    
+    UI --> Context
+    UI --> Hooks
+    Context --> QL
+    Hooks --> QL
+    QL --> GQL
+    GQL --> Repo
+    Repo --> Neo4j
+```
+
+### データフロー
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as React Components
+    participant Context as React Context
+    participant Hooks as Custom Hooks
+    participant Apollo as Apollo Client
+    participant GraphQL as GraphQL API
+    participant Repo as Repository Layer
+    participant Neo4j as Neo4j Database
+    
+    User->>UI: ユーザー操作（スキル選択など）
+    UI->>Context: 状態更新
+    UI->>Hooks: データ要求
+    Hooks->>Apollo: クエリ実行
+    Apollo->>GraphQL: API呼び出し
+    GraphQL->>Repo: データリクエスト
+    Repo->>Neo4j: Cyphnerクエリ実行
+    Neo4j-->>Repo: 結果返却
+    Repo-->>GraphQL: データ返却
+    GraphQL-->>Apollo: レスポンス
+    Apollo-->>Hooks: データ更新
+    Hooks-->>UI: UI更新
+    Context-->>UI: 状態反映
+```
+
+---
+
+## 📦 ディレクトリ構造
 
 ```
 .
 ├── backend/                # Node.js + GraphQL サーバ
 │   ├── src/
+│   │   ├── infrastructure/ # 外部サービス接続レイヤー
+│   │   ├── model/          # ドメインモデル
+│   │   └── test/           # テストディレクトリ
 │   └── package.json
-├── frontend/               # React + Apollo クライアント
+│
+├── frontend/              # React + Apollo クライアント
 │   ├── src/
+│   │   ├── api/           # API通信レイヤー
+│   │   ├── components/    # 共通コンポーネント
+│   │   ├── features/      # 機能モジュール
+│   │   │   └── skillChaining/ # スキル連携機能
+│   │   ├── layouts/       # レイアウトコンポーネント
+│   │   └── utils/         # ユーティリティ関数
 │   └── package.json
-├── neo4j/                  # Neo4j 用データと初期化スクリプト
-│   ├── init.cypher
-│   └── docker-compose.yml
-└── README.md
+│
+├── neo4j/                 # Neo4j 用データと初期化スクリプト
+│   ├── init/              # 初期化Cypherスクリプト
+│   ├── data/              # CSVデータ
+│   └── docker-compose.yml # Neo4jコンテナ設定
+│
+└── docs/                  # ドキュメント
 ```
 
 ---
@@ -34,16 +117,12 @@ docker compose up -d
 
 ブラウザで [http://localhost:7474](http://localhost:7474) にアクセス（認証なし）
 
----
-
 ### 2. 初期データの投入
 
 ```bash
 docker exec sf2-neo4j cypher-shell -f /var/lib/neo4j/import/init.cypher
 docker exec sf2-neo4j cypher-shell -f /var/lib/neo4j/import/categories_order.cypher
 ```
-
----
 
 ### 3. バックエンドのセットアップ
 
@@ -54,8 +133,6 @@ npm run dev
 ```
 
 GraphQL エンドポイントが [http://localhost:4000/graphql](http://localhost:4000/graphql) に立ち上がります。
-
----
 
 ### 4. フロントエンドのセットアップ
 
@@ -69,14 +146,60 @@ npm run dev
 
 ---
 
-## 📘 備考
+## 📘 主要機能
 
-- `init.cypher` にはカテゴリ・術・技・連携関係の全データを記述しています。
-- GraphQL スキーマは `backend/src/schema.ts` に定義されます。
-- データ可視化には `react-force-graph` または `vis-network` の導入を検討中です。
-- 連携のデータは現在は以下ページを参考にしました。感謝申し上げます。
+### スキル連携グラフ可視化
 
-https://web.archive.org/web/20190329052637/http://www.geocities.jp/yama23neko/gamememo/sagafro2/conbi.html
+- 選択したスキルから連携可能な全スキルをグラフ形式で表示
+- 連携先となるスキルをノードとエッジで表現
+- スキルは関連カテゴリによって色分け表示
 
+### カテゴリベースのフィルタリング
+
+- カテゴリ単位でスキル連携をフィルタリング
+- 複数カテゴリを選択してフィルタリングも可能
+- カテゴリに基づいて視覚的に区別するカラーコーディング
+
+### スキルスタッキング機能
+
+- 連携スキルを選択して連携チェーンを構築
+- 選択したスキルを積み上げて表示
+- 連携の可能性を視覚的に確認
+
+### GraphQL APIによるデータアクセス
+
+- カテゴリとスキルの一覧を取得するクエリ
+- スキルの詳細と連携情報を取得するクエリ
+- カテゴリごとにスキルをフィルタリングするクエリ
 
 ---
+
+## 🔍 技術詳細
+
+### バックエンド
+
+- **Node.js / TypeScript**: 型安全なバックエンド開発
+- **GraphQL / Apollo Server**: クライアントに効率的なデータ提供
+- **Neo4j**: グラフデータベースによるスキル連携の自然な表現
+- **Repository パターン**: データアクセスロジックの抽象化
+
+### フロントエンド
+
+- **React / TypeScript**: 型安全なUI開発
+- **Apollo Client**: GraphQLデータフェッチングとキャッシュ
+- **React Context API**: アプリケーション状態管理
+- **カスタムフック**: データフェッチングロジックのカプセル化
+- **コンポーネント階層**: features/components/layoutsによる分離設計
+
+### データモデル
+
+- **Category**: スキルカテゴリ情報と表示順序
+- **Skill**: スキル情報とその所属カテゴリ
+- **連携関係**: スキル間の方向性のある連携関係（有向グラフ）
+
+---
+
+## 📘 参考情報
+
+- 連携のデータは以下のページを参考にしました。感謝申し上げます。  
+  https://web.archive.org/web/20190329052637/http://www.geocities.jp/yama23neko/gamememo/sagafro2/conbi.html
