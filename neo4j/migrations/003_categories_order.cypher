@@ -3,7 +3,7 @@
 // Run this script after init.cypher has created the categories
 
 // Create index on Category.order for better query performance
-CREATE INDEX FOR (c:Category) ON (c.order);
+CREATE INDEX IF NOT EXISTS FOR (c:Category) ON (c.order);
 
 // Batch set orders for all categories using UNWIND for better maintainability
 UNWIND [
