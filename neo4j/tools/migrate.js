@@ -37,6 +37,13 @@ async function connectWithRetry() {
       console.log('Neo4jへの接続に成功しました');
       return driver;
     } catch (error) {
+      // Always dispose the driver before retrying
+      try {
+        await driver?.close();
+      } catch (_) {
+        /* noop – best-effort cleanup */
+      }
+      
       attempts++;
       console.log(`Neo4jへの接続に失敗しました (${attempts}/${config.retryAttempts}): ${error.message}`);
       
