@@ -96,9 +96,11 @@ sequenceDiagram
 │   │   └── utils/         # ユーティリティ関数
 │   └── package.json
 │
-├── neo4j/                 # Neo4j 用データと初期化スクリプト
-│   ├── init/              # 初期化Cypherスクリプト
+├── neo4j/                 # Neo4j 用データとスクリプト
 │   ├── data/              # CSVデータ
+│   ├── init/              # 初期化Cypherスクリプト（レガシー）
+│   ├── migrations/        # マイグレーションスクリプト
+│   ├── tools/             # マイグレーションツール
 │   └── docker-compose.yml # Neo4jコンテナ設定
 │
 └── docs/                  # ドキュメント
@@ -117,12 +119,45 @@ docker compose up -d
 
 ブラウザで [http://localhost:7474](http://localhost:7474) にアクセス（認証なし）
 
-### 2. 初期データの投入
+### 2. Neo4jマイグレーションの実行
+
+プロジェクトはNeo4jマイグレーションシステムを採用しています。必要なデータベーススキーマと初期データは全てマイグレーションスクリプトで管理されています。
 
 ```bash
-docker exec sf2-neo4j cypher-shell -f /var/lib/neo4j/import/init.cypher
-docker exec sf2-neo4j cypher-shell -f /var/lib/neo4j/import/categories_order.cypher
+# Docker Composeの起動時に自動的にマイグレーションが実行されます
+cd neo4j
+docker-compose up -d
 ```
+
+マイグレーションの状態は以下のコマンドで確認できます：
+
+```bash
+docker-compose exec neo4j cypher-shell "MATCH (m:_Migrations) RETURN m"
+```
+
+また、Neo4jブラウザ（http://localhost:7474）から以下のCypherクエリを実行することでも確認できます：
+
+```cypher
+MATCH (m:_Migrations) RETURN m
+```
+
+#### 新しいマイグレーションの追加方法
+
+1. `neo4j/migrations/` ディレクトリに新しいCypherファイルを作成します：
+   ```bash
+   touch neo4j/migrations/004_new_feature.cypher
+   ```
+
+2. マイグレーションファイルにCypherクエリを記述します。複数のステートメントはセミコロン（;）で区切ります。
+
+3. Docker Composeを再起動するか、マイグレーションサービスを単独で実行します：
+   ```bash
+   # コンテナを再起動
+   docker-compose restart
+   
+   # または、マイグレーションのみ実行
+   docker-compose up migrations
+   ```
 
 ### 3. バックエンドのセットアップ
 
