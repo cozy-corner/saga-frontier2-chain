@@ -122,22 +122,33 @@ async function runMigrations() {
           .map(s => s.trim())
           .filter(s => s);
 
-        for (const statement of statements) {
-          await execSession.run(statement);
+        // トランザクションを開始
+        const txc = execSession.beginTransaction();
+        try {
+          // 各ステートメントをトランザクション内で実行
+          for (const statement of statements) {
+            await txc.run(statement);
+          }
+
+          // 成功したマイグレーションを記録（同じトランザクション内）
+          await txc.run(`
+            MATCH (m:_Migrations {id: "migration_tracker"})
+            SET m.last_migration = $migrationId,
+                m.applied_migrations = CASE
+                  WHEN m.applied_migrations IS NULL THEN [$migrationId]
+                  ELSE m.applied_migrations + $migrationId
+                END,
+                m.last_migration_date = datetime()
+          `, { migrationId });
+
+          // トランザクションをコミット
+          await txc.commit();
+          console.log(`成功: ${migrationId}`);
+        } catch (error) {
+          // エラー発生時はトランザクションをロールバック
+          await txc.rollback();
+          throw error;
         }
-
-        // 成功したマイグレーションを記録
-        await execSession.run(`
-          MATCH (m:_Migrations {id: "migration_tracker"})
-          SET m.last_migration = $migrationId,
-              m.applied_migrations = CASE
-                WHEN m.applied_migrations IS NULL THEN [$migrationId]
-                ELSE m.applied_migrations + $migrationId
-              END,
-              m.last_migration_date = datetime()
-        `, { migrationId });
-
-        console.log(`成功: ${migrationId}`);
       } catch (error) {
         console.error(`エラー (${migrationId}): ${error.message}`);
         throw error;
