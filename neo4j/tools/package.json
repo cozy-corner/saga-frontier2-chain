@@ -1,0 +1,8 @@
+{
+  "name": "neo4j-migrations",
+  "version": "1.0.0",
+  "description": "Neo4j Migration Tool",
+  "dependencies": {
+    "neo4j-driver": "^5.5.0"
+  }
+}
