@@ -11,8 +11,28 @@ services:
       NEO4J_AUTH: none
     volumes:
       - ./init:/var/lib/neo4j/import
+      - ./migrations:/migrations
       - neo4j-data:/data
+
+  # マイグレーション用サービス
+  migrations:
+    image: node:16-alpine
+    volumes:
+      - ./migrations:/app/migrations
+      - ./tools:/app/tools
+    working_dir: /app/tools
+    command: >
+      sh -c "
+        echo 'Waiting for Neo4j to be ready...' &&
+        npm install &&
+        node migrate.js
+      "
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=password
+    depends_on:
+      - neo4j
 
 volumes:
   neo4j-data:
-
