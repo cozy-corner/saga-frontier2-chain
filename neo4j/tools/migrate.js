@@ -118,6 +118,7 @@ async function runMigrations() {
       );
 
       // セミコロンで区切られた複数のステートメントを準備
+      // TODO, nits: セミコロンがCypherの一部として使用されている場合の処理
       const statements = cypherScript
         .split(';')
         .map(s => s.trim())
