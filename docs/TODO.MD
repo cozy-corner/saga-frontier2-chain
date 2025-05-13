@@ -22,6 +22,7 @@
 - [x] feat: sort skills by cateogry
 - [x] other: update README
 - [x] other: use neo4j migration tool
+- [] fix: sort by categories
 - [] feat: show badge when selecting categories
 - [] feat: batch cost
 - [] feat: sort skills by category and cost

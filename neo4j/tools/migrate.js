@@ -117,50 +117,80 @@ async function runMigrations() {
         'utf8'
       );
 
-      // マイグレーションの実行
-      const execSession = driver.session({
-        database: config.neo4j.database
-      });
+      // セミコロンで区切られた複数のステートメントを準備
+      // TODO, nits: セミコロンがCypherの一部として使用されている場合の処理
+      const statements = cypherScript
+        .split(';')
+        .map(s => s.trim())
+        .filter(s => s);
+
+      // スキーマ操作とデータ操作を分離（正規表現を使用して正確にマッチング）
+      const schemaPattern = /^\s*(CREATE|DROP)\s+(INDEX|CONSTRAINT)\b/i;
+      const schemaStatements = statements.filter(stmt => schemaPattern.test(stmt));
+      const dataStatements = statements.filter(stmt => !schemaPattern.test(stmt));
 
       try {
-        // セミコロンで区切られた複数のステートメントを実行
-        const statements = cypherScript
-          .split(';')
-          .map(s => s.trim())
-          .filter(s => s);
-
-        // トランザクションを開始
-        const txc = execSession.beginTransaction();
-        try {
-          // 各ステートメントをトランザクション内で実行
-          for (const statement of statements) {
-            await txc.run(statement);
+        // 1. スキーマ操作を実行（存在する場合）
+        if (schemaStatements.length > 0) {
+          const schemaSession = driver.session({ database: config.neo4j.database });
+          try {
+            for (const statement of schemaStatements) {
+              await schemaSession.run(statement);
+            }
+            console.log(`スキーマ操作が完了しました: ${migrationId}`);
+          } finally {
+            await schemaSession.close();
           }
-
-          // 成功したマイグレーションを記録（同じトランザクション内）
-          await txc.run(`
-            MATCH (m:_Migrations {id: "migration_tracker"})
-            SET m.last_migration = $migrationId,
-                m.applied_migrations = CASE
-                  WHEN m.applied_migrations IS NULL THEN [$migrationId]
-                  ELSE m.applied_migrations + $migrationId
-                END,
-                m.last_migration_date = datetime()
-          `, { migrationId });
-
-          // トランザクションをコミット
-          await txc.commit();
-          console.log(`成功: ${migrationId}`);
-        } catch (error) {
-          // エラー発生時はトランザクションをロールバック
-          await txc.rollback();
-          throw error;
         }
+        
+        // 2. データ操作を実行（存在する場合）
+        if (dataStatements.length > 0) {
+          const dataSession = driver.session({ database: config.neo4j.database });
+          try {
+            const dataTxc = dataSession.beginTransaction();
+            try {
+              for (const statement of dataStatements) {
+                await dataTxc.run(statement);
+              }
+              await dataTxc.commit();
+              console.log(`データ操作が完了しました: ${migrationId}`);
+            } catch (error) {
+              await dataTxc.rollback();
+              throw error;
+            }
+          } finally {
+            await dataSession.close();
+          }
+        }
+        
+        // 3. マイグレーション情報を更新
+        const updateSession = driver.session({ database: config.neo4j.database });
+        try {
+          const updateTxc = updateSession.beginTransaction();
+          try {
+            await updateTxc.run(`
+              MATCH (m:_Migrations {id: "migration_tracker"})
+              SET m.last_migration = $migrationId,
+                  m.applied_migrations = CASE
+                    WHEN m.applied_migrations IS NULL THEN [$migrationId]
+                    ELSE m.applied_migrations + $migrationId
+                  END,
+                  m.last_migration_date = datetime()
+            `, { migrationId });
+            await updateTxc.commit();
+          } catch (error) {
+            await updateTxc.rollback();
+            throw error;
+          }
+        } finally {
+          await updateSession.close();
+        }
+        
+        console.log(`成功: ${migrationId}`);
+        
       } catch (error) {
         console.error(`エラー (${migrationId}): ${error.message}`);
         throw error;
-      } finally {
-        await execSession.close();
       }
     }
 
