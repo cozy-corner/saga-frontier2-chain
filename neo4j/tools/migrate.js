@@ -123,20 +123,10 @@ async function runMigrations() {
         .map(s => s.trim())
         .filter(s => s);
 
-      // スキーマ操作とデータ操作を分離
-      const schemaStatements = statements.filter(stmt => 
-        stmt.toUpperCase().includes('CREATE INDEX') || 
-        stmt.toUpperCase().includes('DROP INDEX') ||
-        stmt.toUpperCase().includes('CREATE CONSTRAINT') || 
-        stmt.toUpperCase().includes('DROP CONSTRAINT')
-      );
-      
-      const dataStatements = statements.filter(stmt => 
-        !stmt.toUpperCase().includes('CREATE INDEX') && 
-        !stmt.toUpperCase().includes('DROP INDEX') &&
-        !stmt.toUpperCase().includes('CREATE CONSTRAINT') && 
-        !stmt.toUpperCase().includes('DROP CONSTRAINT')
-      );
+      // スキーマ操作とデータ操作を分離（正規表現を使用して正確にマッチング）
+      const schemaPattern = /^\s*(CREATE|DROP)\s+(INDEX|CONSTRAINT)\b/i;
+      const schemaStatements = statements.filter(stmt => schemaPattern.test(stmt));
+      const dataStatements = statements.filter(stmt => !schemaPattern.test(stmt));
 
       try {
         // 1. スキーマ操作を実行（存在する場合）
