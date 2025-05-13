@@ -1,10 +1,11 @@
-// categories_order.cypher
+// categories_order.cypher - PART 1: Schema changes
 // This script adds order properties to category nodes
 // Run this script after init.cypher has created the categories
 
 // Create index on Category.order for better query performance
 CREATE INDEX IF NOT EXISTS FOR (c:Category) ON (c.order);
 
+// PART 2: Data operations
 // Batch set orders for all categories using UNWIND for better maintainability
 UNWIND [
   {name: '体', order: 1},     // Body technique category
