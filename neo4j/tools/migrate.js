@@ -65,6 +65,9 @@ async function runMigrations() {
     // リトライロジックを使用して接続
     driver = await connectWithRetry();
     
+    // 適用されたマイグレーション一覧を作成
+    const newlyAppliedMigrations = [];
+    
     // 適用済みマイグレーションの管理用ノード作成
     const session = driver.session({ database: config.neo4j.database });
     try {
@@ -203,6 +206,7 @@ async function runMigrations() {
         }
         
         console.log(`成功: ${migrationId}`);
+        newlyAppliedMigrations.push(migrationId);
         
       } catch (error) {
         console.error(`エラー (${migrationId}): ${error.message}`);
@@ -210,16 +214,6 @@ async function runMigrations() {
       }
     }
 
-    // 適用されたマイグレーション一覧を作成
-    const newlyAppliedMigrations = [];
-    for (const file of migrationFiles) {
-      const migrationId = path.basename(file, '.cypher');
-      if (!appliedMigrations.includes(migrationId) && 
-          migrationsRun > 0) {
-        newlyAppliedMigrations.push(migrationId);
-      }
-    }
-    
     if (migrationsRun === 0) {
       console.log('新規マイグレーションはありませんでした');
     } else {
