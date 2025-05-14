@@ -1,0 +1,63 @@
+name: Neo4j Database Migrations
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'neo4j/migrations/**'
+      - 'neo4j/tools/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'neo4j/migrations/**'
+      - 'neo4j/tools/**'
+  # Optional: Manual trigger
+  workflow_dispatch:
+
+jobs:
+  verify-migrations:
+    name: Verify Neo4j Migrations
+    runs-on: ubuntu-latest
+    
+    services:
+      neo4j:
+        image: neo4j:5.5
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7687:7687
+        options: >-
+          --health-cmd "cypher-shell -a bolt://localhost:7687 -u neo4j -p password 'RETURN 1;'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: |
+          cd neo4j/tools
+          npm install
+      
+      - name: Run and verify migrations
+        run: |
+          cd neo4j/tools
+          ./verify_migration.sh
+        env:
+          NEO4J_URI: bolt://localhost:7687
+          NEO4J_USER: neo4j
+          NEO4J_PASSWORD: password
+      
+      - name: Upload migration status report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-status
+          path: neo4j/tools/migration_status.json
