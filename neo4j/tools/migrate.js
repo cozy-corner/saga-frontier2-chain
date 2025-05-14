@@ -124,10 +124,26 @@ async function runMigrations() {
         .map(s => s.trim())
         .filter(s => s);
 
-      // スキーマ操作とデータ操作を分離（正規表現を使用して正確にマッチング）
-      const schemaPattern = /^\s*(CREATE|DROP)\s+(INDEX|CONSTRAINT)\b/i;
-      const schemaStatements = statements.filter(stmt => schemaPattern.test(stmt));
-      const dataStatements = statements.filter(stmt => !schemaPattern.test(stmt));
+      // ファイル名に基づいてスキーマ操作とデータ操作を明示的に分離
+      let schemaStatements = [];
+      let dataStatements = [];
+      
+      if (file.includes('_schema.cypher')) {
+        // スキーマ専用ファイルの場合、全ステートメントをスキーマ操作として扱う
+        schemaStatements = statements;
+        dataStatements = [];
+      } else if (file.includes('_data.cypher')) {
+        // データ専用ファイルの場合、全ステートメントをデータ操作として扱う
+        schemaStatements = [];
+        dataStatements = statements;
+      } else {
+        // スキーマ/データの命名規則に準拠していないファイルの場合
+        console.warn(`警告: ${file} はスキーマ/データの命名規則に準拠していません。`);
+        console.warn('推奨: ファイル名を *_schema.cypher または *_data.cypher に変更してください。');
+        // すべてデータ操作として処理（最も安全な選択）
+        schemaStatements = [];
+        dataStatements = statements;
+      }
 
       try {
         // 1. スキーマ操作を実行（存在する場合）
