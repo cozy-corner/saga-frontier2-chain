@@ -1,9 +1,6 @@
-// categories_order.cypher
-// This script adds order properties to category nodes
-// Run this script after init.cypher has created the categories
-
-// Create index on Category.order for better query performance
-CREATE INDEX FOR (c:Category) ON (c.order);
+// categories_order_data.cypher - Data operations only
+// This script sets order properties for category nodes
+// Run this script after categories_order_schema.cypher has created the index
 
 // Batch set orders for all categories using UNWIND for better maintainability
 UNWIND [
