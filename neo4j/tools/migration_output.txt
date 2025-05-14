@@ -1,0 +1,9 @@
+Neo4jへの接続に成功しました
+適用済みマイグレーション: 001_skills, 002_linkage, 003_categories_order
+スキップ: 001_skills (既に適用済み)
+スキップ: 002_linkage (既に適用済み)
+スキップ: 003_categories_order (既に適用済み)
+新規マイグレーションはありませんでした
+--- MIGRATION_STATUS_BEGIN ---
+{"success":true,"migrationsApplied":[],"timestamp":"2025-05-14T21:49:09.419Z"}
+--- MIGRATION_STATUS_END ---

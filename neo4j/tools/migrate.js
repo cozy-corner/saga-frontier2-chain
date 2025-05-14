@@ -194,14 +194,26 @@ async function runMigrations() {
       }
     }
 
+    // 適用されたマイグレーション一覧を作成
+    const newlyAppliedMigrations = [];
+    for (const file of migrationFiles) {
+      const migrationId = path.basename(file, '.cypher');
+      if (!appliedMigrations.includes(migrationId) && 
+          migrationsRun > 0) {
+        newlyAppliedMigrations.push(migrationId);
+      }
+    }
+    
     if (migrationsRun === 0) {
       console.log('新規マイグレーションはありませんでした');
     } else {
       console.log(`${migrationsRun}個のマイグレーションが適用されました`);
     }
+    
+    return newlyAppliedMigrations;
   } catch (error) {
     console.error(`マイグレーション中にエラーが発生しました: ${error.message}`);
-    process.exit(1);
+    throw error;
   } finally {
     if (driver) {
       await driver.close();
@@ -209,8 +221,33 @@ async function runMigrations() {
   }
 }
 
+// マイグレーション結果のステータス出力
+function outputStatus(migrationsApplied, success) {
+  const status = {
+    success: success,
+    migrationsApplied: migrationsApplied,
+    timestamp: new Date().toISOString()
+  };
+  
+  // コンソールに出力 (標準出力)
+  console.log('--- MIGRATION_STATUS_BEGIN ---');
+  console.log(JSON.stringify(status));
+  console.log('--- MIGRATION_STATUS_END ---');
+  
+  // status.json ファイルに書き込み
+  fs.writeFileSync(
+    path.join(__dirname, 'migration_status.json'), 
+    JSON.stringify(status, null, 2)
+  );
+}
+
 // スクリプトが実行された場合
-runMigrations().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+runMigrations()
+  .then(appliedMigrations => {
+    outputStatus(appliedMigrations || [], true);
+  })
+  .catch(err => {
+    console.error(err);
+    outputStatus([], false);
+    process.exit(1);
+  });
