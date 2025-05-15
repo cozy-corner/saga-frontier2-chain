@@ -7,7 +7,7 @@ export class Skill implements Waza {
   name: string;
   category?: CategoryType;
   linksTo: SkillType[];
-  type: 'waza' = 'waza'; // 固定値
+  type: 'waza' = 'waza' as const;
   wp: number;
 
   constructor(
