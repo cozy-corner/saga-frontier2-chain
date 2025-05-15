@@ -65,8 +65,12 @@ const toCategoryType = (data: Record<string, unknown> | null): CategoryType | nu
 // Helper to convert raw data to SkillType
 const toSkillType = (data: Record<string, unknown> | null): SkillType | null => {
   if (!data) return null;
+  
+  // 全てのスキルを暫定的に技(Waza)として扱う
   return { 
+    type: 'waza', // 固定値
     name: data.name as string, 
+    wp: 0, // デフォルト値
     linksTo: [] // NOTE: Empty array is intentional. LinkTo relationships are loaded on-demand
                // by the GraphQL resolver in schema.ts (Skill.linksTo resolver) rather than eagerly loaded here.
   };
