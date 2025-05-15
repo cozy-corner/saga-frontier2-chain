@@ -24,13 +24,14 @@
 - [x] other: use neo4j migration tool
 - [x] fix: sort by categories
 - [x] other: migration in workflow
-- [] feat: show badge when selecting categories
-- [] feat: batch cost
+- [] feat: add cost of skill
+- [] feat: batch cost (skill point, magic point)
 - [] feat: sort skills by category and cost
+- [] feat: show badge when selecting categories
 - [] feat: show linked name
 - [] feat: batch special effect
-- [] other: font
 - [] other: style and design
+- [] other: font
 - [] other: deploy on google cloud
 - [] feat: save linkage
 - [] feat: reverse search
