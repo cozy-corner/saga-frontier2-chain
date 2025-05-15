@@ -25,6 +25,10 @@
 - [x] fix: sort by categories
 - [x] other: migration in workflow
 - [] feat: add cost of skill
+- - [] feat: add skill type
+- - [] feat: add neo4j schema
+- - [] feat: fix repository
+- - [] feat: frontend
 - [] feat: batch cost (skill point, magic point)
 - [] feat: sort skills by category and cost
 - [] feat: show badge when selecting categories
