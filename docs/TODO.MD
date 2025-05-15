@@ -25,7 +25,7 @@
 - [x] fix: sort by categories
 - [x] other: migration in workflow
 - [] feat: add cost of skill
-- - [] feat: add skill type
+- - [x] feat: add skill type
 - - [] feat: add neo4j schema
 - - [] feat: fix repository
 - - [] feat: frontend
