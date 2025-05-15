@@ -33,6 +33,7 @@
 - [] other: style and design
 - [] other: font
 - [] other: deploy on google cloud
+- [] feat: chain name
 - [] feat: save linkage
 - [] feat: reverse search
 - [] refactor: Consider moving connection details to environment variables for security and flexibility
