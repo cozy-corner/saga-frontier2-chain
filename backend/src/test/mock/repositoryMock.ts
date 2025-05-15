@@ -35,7 +35,9 @@ export function setupRepositoryMocks() {
     return filteredSkills.map(skill => {
       const category = testCategories.find(c => c.name === skill.categoryName);
       return { 
+        type: 'waza', // 全てのスキルを技として扱う
         name: skill.name, 
+        wp: 0, // デフォルト値
         linksTo: [],
         category: {
           name: skill.categoryName,
@@ -52,7 +54,9 @@ export function setupRepositoryMocks() {
     
     const category = testCategories.find(c => c.name === skill.categoryName);
     return { 
+      type: 'waza', // 全てのスキルを技として扱う
       name: skill.name, 
+      wp: 0, // デフォルト値
       linksTo: [],
       category: {
         name: skill.categoryName,
@@ -67,7 +71,9 @@ export function setupRepositoryMocks() {
     const category = testCategories.find(c => c.name === categoryName);
     
     return skills.map(skill => ({ 
+      type: 'waza', // 全てのスキルを技として扱う
       name: skill.name, 
+      wp: 0, // デフォルト値
       linksTo: [],
       category: {
         name: categoryName,
@@ -99,7 +105,9 @@ export function setupRepositoryMocks() {
     return linkedSkills.map(skill => {
       const category = testCategories.find(c => c.name === skill.categoryName);
       return { 
+        type: 'waza', // 全てのスキルを技として扱う
         name: skill.name, 
+        wp: 0, // デフォルト値
         linksTo: [],
         category: {
           name: skill.categoryName,
@@ -118,7 +126,9 @@ export function setupRepositoryMocks() {
     return linkedSkills.map(skill => {
       const category = testCategories.find(c => c.name === skill.categoryName);
       return { 
+        type: 'waza', // 全てのスキルを技として扱う
         name: skill.name, 
+        wp: 0, // デフォルト値
         linksTo: [],
         category: {
           name: skill.categoryName,
