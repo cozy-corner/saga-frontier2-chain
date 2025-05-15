@@ -7,19 +7,25 @@ export interface Skill {
   linksTo: SkillType[];
 }
 
-// 技（WP消費）
+/**
+ * Represents a Waza skill type that consumes WP (Waza Points).
+ */
 export interface Waza extends Skill {
   type: 'waza';
   wp: number;
 }
 
-// 術技（JP消費）
+/**
+ * Represents a JutsuWaza skill type that consumes JP (Jutsu Points).
+ */
 export interface Jutsuwaza extends Skill {
   type: 'jutsuwaza';
   jp: number;
 }
 
-// 術（JP消費、合成術カテゴリ）
+/**
+ * Represents a Jutsu skill type that consumes JP (Jutsu Points).
+ */
 export interface Jutsu extends Skill {
   type: 'jutsu';
   jp: number;
