@@ -1,0 +1,3 @@
+CREATE INDEX IF NOT EXISTS FOR (s:Skill) ON (s.type);
+CREATE INDEX IF NOT EXISTS FOR (s:Skill) ON (s.wp);
+CREATE INDEX IF NOT EXISTS FOR (s:Skill) ON (s.jp);
