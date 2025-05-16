@@ -26,9 +26,10 @@
 - [x] other: migration in workflow
 - [] feat: add cost of skill
 - - [x] feat: add skill type
-- - [] feat: add neo4j schema
-- - [] feat: add data to skill_type
+- - [x] feat: add neo4j schema
+- - [x] feat: add data to skill_type
 - - [] feat: fix repository
+- - [] feat: sort by cost
 - - [] feat: frontend
 - [] feat: batch cost (skill point, magic point)
 - [] feat: sort skills by category and cost
