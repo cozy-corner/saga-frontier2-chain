@@ -27,6 +27,7 @@
 - [] feat: add cost of skill
 - - [x] feat: add skill type
 - - [] feat: add neo4j schema
+- - [] feat: add data to skill_type
 - - [] feat: fix repository
 - - [] feat: frontend
 - [] feat: batch cost (skill point, magic point)
