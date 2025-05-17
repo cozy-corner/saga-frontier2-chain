@@ -202,7 +202,14 @@ export const findSkills = async (categoryName?: string): Promise<SkillType[]> =>
       query = `
         MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) 
         RETURN s, c.name AS categoryName, c.order AS categoryOrder 
-        ORDER BY s.name
+        ORDER BY c.order, 
+                 CASE s.type 
+                   WHEN 'waza' THEN 1 
+                   WHEN 'jutsuwaza' THEN 2 
+                   ELSE 3 
+                 END,
+                 CASE WHEN s.type = 'waza' THEN s.wp ELSE s.jp END,  
+                 s.name
       `;
       params.categoryName = categoryName;
     } else {
@@ -211,7 +218,14 @@ export const findSkills = async (categoryName?: string): Promise<SkillType[]> =>
         MATCH (s:Skill)-[:BELONGS_TO]->(c:Category)
         WHERE NOT c.name IN $excludedCategories
         RETURN s, c.name AS categoryName, c.order AS categoryOrder
-        ORDER BY c.order, s.name
+        ORDER BY c.order, 
+                 CASE s.type 
+                   WHEN 'waza' THEN 1 
+                   WHEN 'jutsuwaza' THEN 2 
+                   ELSE 3 
+                 END,
+                 CASE WHEN s.type = 'waza' THEN s.wp ELSE s.jp END,  
+                 s.name
       `;
       params.excludedCategories = EXCLUDED_CATEGORIES;
     }
@@ -296,7 +310,14 @@ export const findSkillsLinkedFrom = async (skillName: string): Promise<SkillType
         `MATCH (s:Skill {name: $skillName})-[:LINKS_TO]->(linked:Skill)-[:BELONGS_TO]->(c:Category)
          WHERE NOT c.name IN $excludedCategories
          RETURN linked, c.name AS categoryName, c.order AS categoryOrder
-         ORDER BY c.order, linked.name`,
+         ORDER BY c.order, 
+                  CASE linked.type 
+                    WHEN 'waza' THEN 1 
+                    WHEN 'jutsuwaza' THEN 2 
+                    ELSE 3 
+                  END,
+                  CASE WHEN linked.type = 'waza' THEN linked.wp ELSE linked.jp END,  
+                  linked.name`,
         { skillName, excludedCategories: EXCLUDED_CATEGORIES }
       );
       
@@ -322,7 +343,14 @@ export const findSkillsLinkedTo = async (skillName: string): Promise<SkillType[]
         `MATCH (s:Skill {name: $skillName})<-[:LINKS_TO]-(linker:Skill)-[:BELONGS_TO]->(c:Category)
          WHERE NOT c.name IN $excludedCategories
          RETURN linker, c.name AS categoryName, c.order AS categoryOrder
-         ORDER BY c.order, linker.name`,
+         ORDER BY c.order, 
+                  CASE linker.type 
+                    WHEN 'waza' THEN 1 
+                    WHEN 'jutsuwaza' THEN 2 
+                    ELSE 3 
+                  END,
+                  CASE WHEN linker.type = 'waza' THEN linker.wp ELSE linker.jp END,  
+                  linker.name`,
         { skillName, excludedCategories: EXCLUDED_CATEGORIES }
       );
       
@@ -351,7 +379,15 @@ export const findSkillsForCategory = async (categoryName: string): Promise<Skill
     try {
         const result = await session.run(
             `MATCH (c:Category {name: $categoryName})<-[:BELONGS_TO]-(s:Skill) 
-            RETURN s, c.name AS categoryName, c.order AS categoryOrder ORDER BY s.name`,
+            RETURN s, c.name AS categoryName, c.order AS categoryOrder 
+            ORDER BY c.order, 
+                     CASE s.type 
+                       WHEN 'waza' THEN 1 
+                       WHEN 'jutsuwaza' THEN 2 
+                       ELSE 3 
+                     END,
+                     CASE WHEN s.type = 'waza' THEN s.wp ELSE s.jp END,  
+                     s.name`,
             { categoryName }
         );
         
