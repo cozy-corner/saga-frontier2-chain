@@ -28,18 +28,15 @@
 - - [x] feat: add skill type
 - - [x] feat: add neo4j schema
 - - [x] feat: add data to skill_type
-- - [] feat: fix repository
-- - [] feat: sort by cost
-- - [] feat: frontend
-- [] feat: batch cost (skill point, magic point)
-- [] feat: sort skills by category and cost
+- - [x] feat: fix repository
+- - [x] feat: sort by cost
+- [] feat: batch cost (WP, JP)
 - [] feat: show badge when selecting categories
 - [] feat: show linked name
 - [] feat: batch special effect
+- [] feat: fix category of jutsu
 - [] other: style and design
 - [] other: font
 - [] other: deploy on google cloud
-- [] feat: chain name
-- [] feat: save linkage
 - [] feat: reverse search
-- [] refactor: Consider moving connection details to environment variables for security and flexibility
+- [] feat: save linkage
