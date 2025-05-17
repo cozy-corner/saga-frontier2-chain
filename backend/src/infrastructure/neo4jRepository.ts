@@ -66,14 +66,32 @@ const toCategoryType = (data: Record<string, unknown> | null): CategoryType | nu
 const toSkillType = (data: Record<string, unknown> | null): SkillType | null => {
   if (!data) return null;
   
-  // 全てのスキルを暫定的に技(Waza)として扱う
-  return { 
-    type: 'waza', // 固定値
-    name: data.name as string, 
-    wp: 0, // デフォルト値
-    linksTo: [] // NOTE: Empty array is intentional. LinkTo relationships are loaded on-demand
+  const name = data.name as string;
+  const type = data.type as 'waza' | 'jutsuwaza' | 'jutsu' || 'waza';
+  
+  if (type === 'waza') {
+    return {
+      type: 'waza',
+      name: name,
+      wp: typeof data.wp === 'number' ? data.wp as number : 0,
+      linksTo: [] // NOTE: Empty array is intentional. LinkTo relationships are loaded on-demand
                // by the GraphQL resolver in schema.ts (Skill.linksTo resolver) rather than eagerly loaded here.
-  };
+    };
+  } else if (type === 'jutsuwaza') {
+    return {
+      type: 'jutsuwaza',
+      name: name,
+      jp: typeof data.jp === 'number' ? data.jp as number : 0,
+      linksTo: []
+    };
+  } else { // jutsu
+    return {
+      type: 'jutsu',
+      name: name,
+      jp: typeof data.jp === 'number' ? data.jp as number : 0,
+      linksTo: []
+    };
+  }
 };
 
 const extractNodeProps = (record: Neo4jRecord | null | undefined, alias: string): Record<string, unknown> | null => {
