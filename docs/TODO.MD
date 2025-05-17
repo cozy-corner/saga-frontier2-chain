@@ -30,7 +30,8 @@
 - - [x] feat: add data to skill_type
 - - [x] feat: fix repository
 - - [x] feat: sort by cost
-- [] feat: batch cost (WP, JP)
+- - [] feat: frontend
+- [] fix: remove linking line when check category filter
 - [] feat: show badge when selecting categories
 - [] feat: show linked name
 - [] feat: batch special effect
