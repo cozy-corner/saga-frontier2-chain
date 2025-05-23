@@ -32,12 +32,13 @@
 - - [x] feat: sort by cost
 - - [] feat: frontend
 - [] fix: remove linking line when check category filter
+- [] feat: category filter
 - [] feat: show badge when selecting categories
 - [] feat: show linked name
+- [] other: deploy on google cloud
 - [] feat: batch special effect
 - [] feat: fix category of jutsu
 - [] other: style and design
 - [] other: font
-- [] other: deploy on google cloud
 - [] feat: reverse search
 - [] feat: save linkage
