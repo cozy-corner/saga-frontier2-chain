@@ -32,6 +32,19 @@
 - - [x] feat: sort by cost
 - - [] feat: frontend
 - [x] fix: remove linking line when check category filter
+- [x] refactor: extract logic from SkillFlowChart component
+- - [x] create useSkillGraph custom hook for data fetching and filtering
+- - [x] extract utility functions for graph generation
+- - [x] create useGraphInteractions hook for event handlers
+- - [x] extract SkillNode as a separate component
+- [] refactor: add tests
+- - [] unit tests for utility functions (skillGraphUtils)
+- - [] tests for custom hooks (useSkillGraph, useGraphInteractions)
+- [] refactor: consolidate type definitions
+- - [] create a central types file for shared type definitions
+- [] refactor: apply separation of concerns to other components
+- - [] identify components with similar complexity
+- - [] extract business logic and create custom hooks
 - [] feat: category filter
 - [] feat: show badge when selecting categories
 - [] feat: show linked name
