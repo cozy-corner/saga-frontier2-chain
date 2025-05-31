@@ -38,7 +38,7 @@
 - - [x] create useGraphInteractions hook for event handlers
 - - [x] extract SkillNode as a separate component
 - [] refactor: add tests
-- - [] unit tests for utility functions (skillGraphUtils)
+- - [x] unit tests for utility functions (skillGraphUtils)
 - - [] tests for custom hooks (useSkillGraph, useGraphInteractions)
 - [] refactor: consolidate type definitions
 - - [] create a central types file for shared type definitions
