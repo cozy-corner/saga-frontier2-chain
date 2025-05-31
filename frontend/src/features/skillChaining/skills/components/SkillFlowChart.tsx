@@ -13,15 +13,18 @@ import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
 import { useSkillGraph } from '../hooks/useSkillGraph';
 import { useGraphInteractions } from '../hooks/useGraphInteractions';
+import { OnSkillSelectCallback } from '@features/skillChaining/types';
 import SkillNode from './SkillNode';
 import './SkillNode.css';
 import './SkillFlowChart.css';
 
-
+/**
+ * スキルフローチャートコンポーネントのプロパティ
+ */
 interface SkillFlowChartProps {
   skillName: string;
   selectedCategories?: string[];
-  onSkillSelect?: (skillName: string, shouldAddToChain: boolean) => void;
+  onSkillSelect?: OnSkillSelectCallback;
 }
 
 export function SkillFlowChart({ 
