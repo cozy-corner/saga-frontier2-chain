@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ReactFlow, {
   ConnectionLineType,
   Controls,
@@ -6,45 +6,16 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   MiniMap,
-  NodeProps,
-  Handle,
-  Position,
   NodeTypes,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
-import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 import { useSkillGraph } from '../hooks/useSkillGraph';
 import { useGraphInteractions } from '../hooks/useGraphInteractions';
-import { SkillNodeData } from '../utils/skillGraphUtils';
+import SkillNode from './SkillNode';
+import './SkillNode.css';
 import './SkillFlowChart.css';
-
-// カスタムノードコンポーネント
-const SkillNode = memo(({ data, selected }: NodeProps<SkillNodeData>) => {
-  // カテゴリーに基づいて色を設定
-  const colors = getCategoryColor(data.category || 'default');
-  
-  return (
-    <div 
-      className={`graph-node-base node-with-badge skill-node ${selected ? 'selected' : ''}`} 
-      style={{ 
-        background: colors.bg, 
-        border: `1px solid ${colors.border}`
-      }}
-    >
-      <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
-      <div>{data.label}</div>
-      {data.linkCount !== undefined && data.linkCount > 0 && (
-        <div className="node-badge">{data.linkCount}</div>
-      )}
-      <Handle type="source" position={Position.Bottom} style={{ background: colors.border }} />
-    </div>
-  );
-});
-
-// displayNameを追加してESLintのreact/display-nameエラーを解決
-SkillNode.displayName = 'SkillNode';
 
 
 interface SkillFlowChartProps {
