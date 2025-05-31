@@ -89,11 +89,18 @@ sequenceDiagram
 ├── frontend/              # React + Apollo クライアント
 │   ├── src/
 │   │   ├── api/           # API通信レイヤー
+│   │   │   ├── graphql/   # GraphQLクエリ定義
+│   │   │   ├── hooks/     # データフェッチング用カスタムフック
+│   │   │   └── types.ts   # API型定義
 │   │   ├── components/    # 共通コンポーネント
 │   │   ├── features/      # 機能モジュール
 │   │   │   └── skillChaining/ # スキル連携機能
+│   │   │       └── skills/
+│   │   │           ├── components/   # UIコンポーネント
+│   │   │           ├── hooks/        # 機能特化カスタムフック
+│   │   │           └── utils/        # ビジネスロジック
 │   │   ├── layouts/       # レイアウトコンポーネント
-│   │   └── utils/         # ユーティリティ関数
+│   │   └── utils/         # 共通ユーティリティ関数
 │   └── package.json
 │
 ├── neo4j/                 # Neo4j 用データとスクリプト
@@ -220,7 +227,15 @@ npm run dev
 - **React / TypeScript**: 型安全なUI開発
 - **Apollo Client**: GraphQLデータフェッチングとキャッシュ
 - **React Context API**: アプリケーション状態管理
-- **カスタムフック**: データフェッチングロジックのカプセル化
+- **ReactFlow**: インタラクティブなグラフ可視化
+- **カスタムフック**: 
+  - `useSkillGraph`: グラフデータの取得とフィルタリング
+  - `useGraphInteractions`: グラフのインタラクション管理
+  - データフェッチングロジックのカプセル化
+- **関心の分離**:
+  - ビューレイヤー: ReactFlowを使用したグラフ表示
+  - ビジネスロジック: ユーティリティ関数による純粋な処理
+  - インタラクション: カスタムフックによるイベント処理
 - **コンポーネント階層**: features/components/layoutsによる分離設計
 
 ### データモデル
