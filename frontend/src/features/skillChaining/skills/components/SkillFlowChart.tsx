@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { calculateCircleLayout } from '@features/skillChaining/graph/utils/graphLayout';
 import ReactFlow, {
   Node,
@@ -20,6 +20,7 @@ import { useLinkedSkills } from '@api/hooks/useLinkedSkills';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
+import { Skill } from '@api/types';
 import './SkillFlowChart.css';
 
 // スキルノードのデータ型を拡張
@@ -56,7 +57,7 @@ const SkillNode = memo(({ data, selected }: NodeProps<SkillNodeData>) => {
 SkillNode.displayName = 'SkillNode';
 
 // ノードとエッジを生成する純粋な関数
-function createNodesAndEdges(sourceSkillName: string, skillsToDisplay: any[], linkedSkills: any[]): { nodes: Node[], edges: Edge[] } {
+function createNodesAndEdges(sourceSkillName: string, skillsToDisplay: Skill[], linkedSkills: Skill[]): { nodes: Node[], edges: Edge[] } {
   const newNodes: Node[] = [];
   const newEdges: Edge[] = [];
   
@@ -194,7 +195,7 @@ export function SkillFlowChart({
       setEdges(newEdges);
     }, 0);
     setHighlightedNodes([sourceSkillName]);
-  }, [sourceSkillName, filteredSkills, linkedSkills, loading, error]);
+  }, [sourceSkillName, filteredSkills, linkedSkills, loading, error, setNodes, setEdges]);
   
   // ノードホバー時のハイライト処理
   const onNodeMouseEnter: NodeMouseHandler = useCallback((_, node) => {
