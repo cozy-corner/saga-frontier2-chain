@@ -17,14 +17,8 @@ import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 import { useSkillGraph } from '../hooks/useSkillGraph';
+import { SkillNodeData } from '../utils/skillGraphUtils';
 import './SkillFlowChart.css';
-
-// スキルノードのデータ型を拡張
-interface SkillNodeData {
-  label: string;
-  category?: string;
-  linkCount?: number;
-}
 
 // カスタムノードコンポーネント
 const SkillNode = memo(({ data, selected }: NodeProps<SkillNodeData>) => {
