@@ -30,6 +30,9 @@ export function useGraphInteractions({
         e.source === node.id || e.target === node.id
       );
       
+      // パフォーマンス最適化: エッジIDのSetを作成
+      const connectedEdgeIds = new Set(connectedEdges.map(e => e.id));
+      
       const relatedNodeIds = [
         node.id,
         ...connectedEdges.map(e => e.source === node.id ? e.target : e.source)
@@ -49,11 +52,11 @@ export function useGraphInteractions({
       setEdges(eds => 
         eds.map(e => ({
           ...e,
-          animated: connectedEdges.some(ce => ce.id === e.id),
+          animated: connectedEdgeIds.has(e.id),
           style: {
             ...e.style,
-            opacity: connectedEdges.some(ce => ce.id === e.id) ? 1 : 0.1,
-            zIndex: connectedEdges.some(ce => ce.id === e.id) ? 1 : 0
+            opacity: connectedEdgeIds.has(e.id) ? 1 : 0.1,
+            zIndex: connectedEdgeIds.has(e.id) ? 1 : 0
           }
         }))
       );
