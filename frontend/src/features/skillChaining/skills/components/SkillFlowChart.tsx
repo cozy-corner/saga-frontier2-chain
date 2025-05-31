@@ -152,37 +152,15 @@ export function SkillFlowChart({
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
   
-  // デバッグ用：useEffectの実行回数を追跡
-  const useEffectExecutionCount = useRef(0);
-  const lastDependencies = useRef<any>({});
-  
-  // React.StrictMode対応：前回のデータハッシュを記録して重複処理を防ぐ
-  const lastDataHash = useRef<string>('');
-  const hasProcessedRef = useRef(false);
-  
-  // スキルデータからノードとエッジを生成（適切なReactパターン）
+  // スキルデータからノードとエッジを生成
   useEffect(() => {
-    // デバッグ用：実行回数をカウント
-    useEffectExecutionCount.current += 1;
-    const currentCount = useEffectExecutionCount.current;
-    
-    console.log(`🔄 useEffect実行 #${currentCount}`);
-    console.log('📊 依存関係の状態:', {
-      sourceSkillName,
-      filteredSkillsLength: filteredSkills?.length || 0,
-      loading,
-      error: !!error
-    });
-    
     // データチェック: 空の場合や読み込み中は処理しない
     if (loading || error) {
-      console.log('⏸️ 早期リターン - loading:', loading, 'error:', !!error);
       return;
     }
     
     // 連携スキルが存在しない場合は中心ノードのみ表示
     if (!filteredSkills || filteredSkills.length === 0) {
-      console.log('📝 連携スキルが存在しないため中心ノードのみ表示');
       // 既存のノードとエッジをクリア
       setNodes([]);
       setEdges([]);
@@ -206,10 +184,6 @@ export function SkillFlowChart({
       filteredSkills, 
       linkedSkills || []
     );
-    
-    console.log('✅ 新しいノード数:', newNodes.length);
-    console.log('✅ 新しいエッジ数:', newEdges.length);
-    console.log('📝 作成されたエッジID一覧:', newEdges.map(e => e.id));
     
     // 既存のノードとエッジを完全にクリアしてから新しいものを設定
     setNodes([]);
@@ -300,8 +274,6 @@ export function SkillFlowChart({
         if (onSkillSelect) {
           onSkillSelect(clickedSkillName, shouldAddToChain);
         }
-      } else {
-        console.warn('無効なスキル名でクリックされました:', node);
       }
     } catch (error) {
       console.error('ノードクリック処理でエラーが発生しました:', error);
