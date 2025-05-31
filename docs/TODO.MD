@@ -37,9 +37,9 @@
 - - [x] extract utility functions for graph generation
 - - [x] create useGraphInteractions hook for event handlers
 - - [x] extract SkillNode as a separate component
-- [] refactor: add tests
+- [x] refactor: add tests
 - - [x] unit tests for utility functions (skillGraphUtils)
-- - [] tests for custom hooks (useSkillGraph, useGraphInteractions)
+- - [x] tests for custom hooks (useSkillGraph, useGraphInteractions)
 - [] refactor: consolidate type definitions
 - - [] create a central types file for shared type definitions
 - [] refactor: apply separation of concerns to other components
