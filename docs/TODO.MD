@@ -31,7 +31,7 @@
 - - [x] feat: fix repository
 - - [x] feat: sort by cost
 - - [] feat: frontend
-- [] fix: remove linking line when check category filter
+- [x] fix: remove linking line when check category filter
 - [] feat: category filter
 - [] feat: show badge when selecting categories
 - [] feat: show linked name
