@@ -42,9 +42,13 @@
 - - [x] tests for custom hooks (useSkillGraph, useGraphInteractions)
 - [x] refactor: consolidate type definitions
 - - [x] create a central types file for shared type definitions
-- [] refactor: apply separation of concerns to other components
-- - [] identify components with similar complexity
-- - [] extract business logic and create custom hooks
+- [x] refactor: apply separation of concerns to other components
+- - [x] identify components with similar complexity
+- - [x] extract business logic and create custom hooks
+- - [x] refactor SkillChainVisualization component
+- - [x] refactor CategorySkillsGraph component
+- - [x] refactor VisualizationContent component
+- - [x] update README with architecture patterns
 - [] feat: category filter
 - [] feat: show badge when selecting categories
 - [] feat: show linked name

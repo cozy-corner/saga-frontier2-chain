@@ -94,11 +94,23 @@ sequenceDiagram
 │   │   │   └── types.ts   # API型定義
 │   │   ├── components/    # 共通コンポーネント
 │   │   ├── features/      # 機能モジュール
-│   │   │   └── skillChaining/ # スキル連携機能
-│   │   │       └── skills/
-│   │   │           ├── components/   # UIコンポーネント
-│   │   │           ├── hooks/        # 機能特化カスタムフック
-│   │   │           └── utils/        # ビジネスロジック
+│   │   │   └── skillChaining/     # スキル連携機能
+│   │   │       ├── types/         # 共通型定義
+│   │   │       ├── state/         # Context/状態管理
+│   │   │       ├── skills/        # スキル関連機能
+│   │   │       │   ├── components/   # スキルUIコンポーネント
+│   │   │       │   ├── hooks/        # スキル機能フック
+│   │   │       │   └── utils/        # スキルビジネスロジック
+│   │   │       ├── categories/    # カテゴリ関連機能
+│   │   │       │   ├── components/   # カテゴリUIコンポーネント
+│   │   │       │   └── hooks/        # カテゴリ機能フック
+│   │   │       ├── graph/         # グラフ可視化機能
+│   │   │       │   ├── components/   # グラフUIコンポーネント
+│   │   │       │   ├── hooks/        # グラフ機能フック
+│   │   │       │   └── utils/        # グラフ計算ロジック
+│   │   │       └── pages/         # ページコンポーネント
+│   │   │           ├── components/   # ページ専用コンポーネント
+│   │   │           └── hooks/        # ページ専用フック
 │   │   ├── layouts/       # レイアウトコンポーネント
 │   │   └── utils/         # 共通ユーティリティ関数
 │   └── package.json
@@ -228,15 +240,44 @@ npm run dev
 - **Apollo Client**: GraphQLデータフェッチングとキャッシュ
 - **React Context API**: アプリケーション状態管理
 - **ReactFlow**: インタラクティブなグラフ可視化
-- **カスタムフック**: 
-  - `useSkillGraph`: グラフデータの取得とフィルタリング
-  - `useGraphInteractions`: グラフのインタラクション管理
-  - データフェッチングロジックのカプセル化
-- **関心の分離**:
-  - ビューレイヤー: ReactFlowを使用したグラフ表示
-  - ビジネスロジック: ユーティリティ関数による純粋な処理
-  - インタラクション: カスタムフックによるイベント処理
-- **コンポーネント階層**: features/components/layoutsによる分離設計
+
+#### アーキテクチャパターン
+
+##### 関心の分離（Separation of Concerns）
+- **プレゼンテーション層**: UIコンポーネント（表示のみ責任）
+- **ビジネスロジック層**: ユーティリティ関数による純粋な処理
+- **データアクセス層**: カスタムフックによるデータフェッチング
+- **状態管理層**: React ContextとuseReducerによる状態管理
+
+##### カスタムフック
+- **データフェッチング用**:
+  - `useCategories`: カテゴリ一覧の取得
+  - `useAllSkills`: 全スキルの取得
+  - `useSkillsByCategory`: カテゴリ別スキルの取得
+  - `useLinkedSkills`: スキル連携情報の取得
+- **機能特化フック**:
+  - `useSkillGraph`: グラフデータの生成とフィルタリング
+  - `useGraphInteractions`: グラフのマウスインタラクション管理
+  - `useSkillChainData`: 複数データソースの統合管理
+  - `useSkillSelection`: スキル選択ロジックの管理
+  - `useVisualizationMode`: 表示モードの状態管理
+
+##### ユーティリティ関数
+- `skillGraphUtils`: グラフデータの生成・フィルタリング処理
+- `graphLayout`: 円形レイアウトの計算
+- `categoryColors`: カテゴリカラーマッピング
+
+##### 型定義の集約管理
+- **中央管理型定義** (`types/index.ts`):
+  - 共通インターフェース（コールバック、プロバイダー等）
+  - Context関連の型（State、Action、ContextType）
+  - 共有データ型（ノード、エッジ等）
+- **コンポーネント固有型定義**: 各コンポーネントファイル内で管理
+
+##### コンポーネント設計
+- **Container/Presentational パターン**: ロジックとUIの分離
+- **Compound Components**: 関連コンポーネントのグループ化
+- **高凝集・疎結合**: 各コンポーネントが単一の責任を持つ
 
 ### データモデル
 
