@@ -49,7 +49,8 @@
 - - [x] refactor CategorySkillsGraph component
 - - [x] refactor VisualizationContent component
 - - [x] update README with architecture patterns
-- [] feat: category filter
+- [x] fix: batch number are too large
+- [] feat: default category filter
 - [] feat: show badge when selecting categories
 - [] feat: show linked name
 - [] other: deploy on google cloud
