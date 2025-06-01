@@ -1,14 +1,6 @@
 import { useCallback } from 'react';
-import { NodeMouseHandler, Edge, Node } from 'reactflow';
-
-interface UseGraphInteractionsProps {
-  edges: Edge[];
-  sourceSkillName: string;
-  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
-  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
-  setHighlightedNodes: React.Dispatch<React.SetStateAction<string[]>>;
-  onSkillSelect?: (skillName: string, shouldAddToChain: boolean) => void;
-}
+import { NodeMouseHandler} from 'reactflow';
+import { UseGraphInteractionsProps } from '@features/skillChaining/types';
 
 /**
  * グラフのインタラクション（ホバー、クリック等）を管理するカスタムフック

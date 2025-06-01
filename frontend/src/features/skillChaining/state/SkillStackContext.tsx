@@ -1,14 +1,10 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-
-export interface SkillStackState {
-  selectedSkills: string[]; // スキル名の配列
-}
-
-type SkillStackAction =
-  | { type: 'ADD_SKILL'; payload: string }
-  | { type: 'REMOVE_SKILL'; payload: string }
-  | { type: 'CLEAR_SKILLS' }
-  | { type: 'SELECT_STACK_SKILL'; payload: number }; // スタック内のスキルを選択したときのインデックス
+import React, { createContext, useContext, useReducer } from 'react';
+import { 
+  SkillStackState, 
+  SkillStackAction, 
+  SkillStackContextType, 
+  ProviderProps 
+} from '@features/skillChaining/types';
 
 const MAX_SKILLS = 4;
 const initialState: SkillStackState = {
@@ -67,14 +63,10 @@ export function skillStackReducer(state: SkillStackState, action: SkillStackActi
   }
 }
 
-interface SkillStackContextType {
-  state: SkillStackState;
-  dispatch: React.Dispatch<SkillStackAction>;
-}
 
 const SkillStackContext = createContext<SkillStackContextType | undefined>(undefined);
 
-export function SkillStackProvider({ children }: { children: ReactNode }) {
+export function SkillStackProvider({ children }: ProviderProps) {
   const [state, dispatch] = useReducer(skillStackReducer, initialState);
 
   return (

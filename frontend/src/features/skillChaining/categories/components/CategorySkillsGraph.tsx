@@ -13,20 +13,15 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { useSkillsByCategory } from '@api/hooks/useSkillsByCategory';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
+import { SkillNodeData, OnSkillSelectCallback } from '@features/skillChaining/types';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
 import { Skill } from '@api/types';
 import '@features/skillChaining/graph/components/GraphStyles.css';
 
-// スキルノードのデータ型
-interface SkillNodeData {
-  label: string;
-  category: string;
-}
-
 // カスタムスキルノードコンポーネント
 const SkillNode = ({ data }: NodeProps<SkillNodeData>) => {
-  const colors = getCategoryColor(data.category);
+  const colors = getCategoryColor(data.category || '');
   
   return (
     <div 
@@ -47,7 +42,7 @@ SkillNode.displayName = 'SkillNode';
 
 interface CategorySkillsGraphProps {
   category: string;
-  onSkillSelect: (skillName: string, shouldAddToChain: boolean) => void;
+  onSkillSelect: OnSkillSelectCallback;
 }
 
 export function CategorySkillsGraph({ 
