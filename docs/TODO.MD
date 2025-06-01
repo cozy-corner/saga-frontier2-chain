@@ -40,8 +40,8 @@
 - [x] refactor: add tests
 - - [x] unit tests for utility functions (skillGraphUtils)
 - - [x] tests for custom hooks (useSkillGraph, useGraphInteractions)
-- [] refactor: consolidate type definitions
-- - [] create a central types file for shared type definitions
+- [x] refactor: consolidate type definitions
+- - [x] create a central types file for shared type definitions
 - [] refactor: apply separation of concerns to other components
 - - [] identify components with similar complexity
 - - [] extract business logic and create custom hooks

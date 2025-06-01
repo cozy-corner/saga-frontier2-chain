@@ -1,18 +1,10 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-
-// State type
-export interface ChainState {
-  selectedCategory: string | null;
-  selectedSkill: string | null;
-  sourceSkill: string | null;
-  isLinkMode: boolean;
-}
-
-// Action types
-type ChainAction =
-  | { type: 'SELECT_CATEGORY'; payload: { name: string; fromLink?: boolean } }
-  | { type: 'SELECT_SKILL'; payload: { name: string } }
-  | { type: 'RESET' };
+import React, { createContext, useContext, useReducer } from 'react';
+import { 
+  ChainState, 
+  ChainAction, 
+  ChainContextType, 
+  ProviderProps 
+} from '@features/skillChaining/types';
 
 // Initial state
 const initialState: ChainState = {
@@ -60,21 +52,11 @@ function chainReducer(state: ChainState, action: ChainAction): ChainState {
   }
 }
 
-// Context type definition
-interface ChainContextType {
-  state: ChainState;
-  dispatch: React.Dispatch<ChainAction>;
-}
 
 // Create context
 const ChainContext = createContext<ChainContextType | undefined>(undefined);
 
-// Provider component
-interface ChainProviderProps {
-  children: ReactNode;
-}
-
-export function ChainProvider({ children }: ChainProviderProps) {
+export function ChainProvider({ children }: ProviderProps) {
   const [state, dispatch] = useReducer(chainReducer, initialState);
 
   return (

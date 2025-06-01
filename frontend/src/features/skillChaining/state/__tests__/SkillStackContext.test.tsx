@@ -5,7 +5,7 @@ import {
   SkillStackProvider, 
   useSkillStack 
 } from '../SkillStackContext';
-import type { SkillStackState } from '../SkillStackContext';
+import type { SkillStackState } from '@features/skillChaining/types';
 import React, { ReactNode } from 'react';
 
 const TEST_SKILLS = {
