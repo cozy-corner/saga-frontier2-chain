@@ -1,25 +1,13 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-// Graph-specific state
-interface GraphState {
-  graphSkill: string | null;
-}
-
-// Context type definition
-interface GraphContextType {
-  state: GraphState;
-  setGraphSkill: (skillName: string | null) => void;
-}
+import React, { createContext, useContext, useState } from 'react';
+import { 
+  GraphContextType, 
+  ProviderProps 
+} from '@features/skillChaining/types';
 
 // Create context
 const GraphContext = createContext<GraphContextType | undefined>(undefined);
 
-// Provider component
-interface GraphProviderProps {
-  children: ReactNode;
-}
-
-export function GraphProvider({ children }: GraphProviderProps) {
+export function GraphProvider({ children }: ProviderProps) {
   const [graphSkill, setGraphSkill] = useState<string | null>(null);
 
   return (

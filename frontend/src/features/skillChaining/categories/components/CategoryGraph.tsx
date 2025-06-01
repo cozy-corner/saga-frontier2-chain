@@ -10,15 +10,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
+import { CategoryNodeData, OnCategorySelectCallback } from '@features/skillChaining/types';
 import '@features/skillChaining/graph/components/GraphStyles.css';
-
-interface CategoryNodeData {
-  label: string;
-  color: {
-    bg: string;
-    border: string;
-  }
-}
 
 const CategoryNode = ({ data }: NodeProps<CategoryNodeData>) => {
   return (
@@ -38,7 +31,7 @@ CategoryNode.displayName = 'CategoryNode';
 
 interface CategoryGraphProps {
   categories: string[];
-  onCategorySelect: (category: string) => void;
+  onCategorySelect: OnCategorySelectCallback;
 }
 
 export function CategoryGraph({ categories, onCategorySelect }: CategoryGraphProps) {

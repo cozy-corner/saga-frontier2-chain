@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { NodeProps, Handle, Position } from 'reactflow';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
-import { SkillNodeData } from '../utils/skillGraphUtils';
+import { SkillNodeData } from '@features/skillChaining/types';
 
 /**
  * スキルを表現するカスタムノードコンポーネント

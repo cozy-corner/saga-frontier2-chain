@@ -2,12 +2,7 @@ import { Node, Edge } from 'reactflow';
 import { Skill } from '@api/types';
 import { calculateCircleLayout } from '@features/skillChaining/graph/utils/graphLayout';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
-
-export interface SkillNodeData {
-  label: string;
-  category?: string;
-  linkCount?: number;
-}
+import { SkillNodeData } from '@features/skillChaining/types';
 
 /**
  * カテゴリに基づいてスキルをフィルタリングする
