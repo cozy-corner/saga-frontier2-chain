@@ -1,44 +1,18 @@
-import React, { useMemo } from 'react';
-import { calculateCircleLayout } from '@features/skillChaining/graph/utils/graphLayout';
+import React, { useMemo, useCallback } from 'react';
 import ReactFlow, { 
   Node, 
   Background, 
   Controls, 
   MiniMap, 
-  NodeTypes,
-  NodeProps, 
-  Handle,
-  Position
+  NodeTypes
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { useSkillsByCategory } from '@api/hooks/useSkillsByCategory';
-import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
-import { SkillNodeData, OnSkillSelectCallback } from '@features/skillChaining/types';
+import { OnSkillSelectCallback } from '@features/skillChaining/types';
 import { LoadingIndicator } from '@components/common/LoadingIndicator';
 import { ErrorMessage } from '@components/common/ErrorMessage';
-import { Skill } from '@api/types';
+import { useCategorySkillsGraph } from '../hooks/useCategorySkillsGraph';
+import { CategorySkillNode } from './CategorySkillNode';
 import '@features/skillChaining/graph/components/GraphStyles.css';
-
-// カスタムスキルノードコンポーネント
-const SkillNode = ({ data }: NodeProps<SkillNodeData>) => {
-  const colors = getCategoryColor(data.category || '');
-  
-  return (
-    <div 
-      className="graph-node-base skill-node"
-      style={{ 
-        background: colors.bg, 
-        border: `1px solid ${colors.border}`
-      }}
-    >
-      <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
-      <div>{data.label}</div>
-      <Handle type="source" position={Position.Bottom} style={{ background: colors.border }} />
-    </div>
-  );
-};
-
-SkillNode.displayName = 'SkillNode';
 
 interface CategorySkillsGraphProps {
   category: string;
@@ -49,39 +23,45 @@ export function CategorySkillsGraph({
   category, 
   onSkillSelect 
 }: CategorySkillsGraphProps) {
-  const { skills, loading, error } = useSkillsByCategory(category);
+  // カスタムフックでデータ取得とノード生成を管理
+  const { skillNodes, loading, error, hasSkills } = useCategorySkillsGraph(category);
   
+  // カスタムノードタイプの定義
   const nodeTypes = useMemo<NodeTypes>(() => ({
-    skillNode: SkillNode
+    skillNode: CategorySkillNode
   }), []);
-  
-  // スキルをノードに変換
-  const skillNodes = useMemo<Node[]>(() => {
-    if (!skills || skills.length === 0) return [];
-    
-    return skills.map((skill: Skill, index: number) => {
-      // 円形に配置する計算
-      const position = calculateCircleLayout(skills, index);
-      
-      return {
-        id: skill.name,
-        type: 'skillNode',
-        data: { 
-          label: skill.name,
-          category: category
-        },
-        position: position
-      };
-    });
-  }, [skills, category]);
 
-  const onNodeClick = (_: React.MouseEvent, node: Node) => {
+  // ノードクリックハンドラー
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     onSkillSelect(node.id as string, true); // カテゴリグラフからのスキル選択は常に連携に追加する
-  };
+  }, [onSkillSelect]);
 
-  if (loading) return <div className="loading-container"><LoadingIndicator /></div>;
-  if (error) return <div className="error-container"><ErrorMessage message={error?.message || 'エラーが発生しました'} /></div>;
-  if (skills.length === 0) return <div className="empty-container">このカテゴリーにスキルがありません。</div>;
+  // ローディング状態
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <LoadingIndicator />
+      </div>
+    );
+  }
+  
+  // エラー状態
+  if (error) {
+    return (
+      <div className="error-container">
+        <ErrorMessage message={error?.message || 'エラーが発生しました'} />
+      </div>
+    );
+  }
+  
+  // スキルがない場合
+  if (!hasSkills) {
+    return (
+      <div className="empty-container">
+        このカテゴリーにスキルがありません。
+      </div>
+    );
+  }
 
   return (
     <div className="category-skills-graph" style={{ height: 600, width: '100%' }}>

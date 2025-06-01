@@ -1,14 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { SkillFlowChart } from '../../skills/components/SkillFlowChart';
-import { CategoryGraph } from '../../categories/components/CategoryGraph';
-import { CategorySkillsGraph } from '../../categories/components/CategorySkillsGraph';
+import React, { useCallback } from 'react';
+import { useVisualizationMode } from '../hooks/useVisualizationMode';
+import { VisualizationRenderer } from './VisualizationRenderer';
 import './GraphStyles.css';
-
-enum DisplayMode {
-  CATEGORIES = 'categories',
-  SKILLS = 'skills',
-  FLOWCHART = 'flowchart'
-}
 
 interface VisualizationContentProps {
   graphSkill: string | null;
@@ -17,73 +10,41 @@ interface VisualizationContentProps {
   onSkillSelect: (skillName: string, shouldAddToChain: boolean) => void;
 }
 
+/**
+ * スキル連携の可視化コンテンツを管理するコンポーネント
+ * 表示モードの管理と適切なグラフコンポーネントのレンダリングを担当
+ */
 export const VisualizationContent: React.FC<VisualizationContentProps> = ({
   graphSkill,
   selectedCategories,
   allCategories,
   onSkillSelect
 }) => {
-  // 表示モード: カテゴリー -> スキル -> フローチャート
-  const [displayMode, setDisplayMode] = useState<DisplayMode>(
-    graphSkill ? DisplayMode.FLOWCHART : DisplayMode.CATEGORIES
-  );
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  // 現在のdisplayModeへの参照を保持
-  const displayModeRef = useRef(displayMode);
-  
-  // displayModeが変更されたら参照を更新
-  useEffect(() => {
-    displayModeRef.current = displayMode;
-  }, [displayMode]);
-  
-  // graphSkillが変わった時の処理
-  useEffect(() => {
-    if (graphSkill) {
-      setDisplayMode(DisplayMode.FLOWCHART);
-    } else if (!graphSkill && displayModeRef.current === DisplayMode.FLOWCHART) {
-      setDisplayMode(DisplayMode.CATEGORIES);
-    }
-  }, [graphSkill]);
-
-  // カテゴリー選択ハンドラ
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
-    setDisplayMode(DisplayMode.SKILLS);
-  };
+  // カスタムフックで表示モードを管理
+  const {
+    displayMode,
+    selectedCategory,
+    handleCategorySelect,
+    switchToFlowChart
+  } = useVisualizationMode(graphSkill);
 
   // スキル選択ハンドラ
-  const handleSkillSelect = (skillName: string, shouldAddToChain: boolean = true) => {
+  const handleSkillSelect = useCallback((skillName: string, shouldAddToChain: boolean = true) => {
     onSkillSelect(skillName, shouldAddToChain);
-    setDisplayMode(DisplayMode.FLOWCHART);
-  };
+    switchToFlowChart();
+  }, [onSkillSelect, switchToFlowChart]);
 
   return (
     <div className="visualization-container">
-      {displayMode === DisplayMode.CATEGORIES ? (
-        <>
-          <CategoryGraph 
-            categories={allCategories} 
-            onCategorySelect={handleCategorySelect} 
-          />
-          <div className="empty-state">
-            <p className="notification">
-              カテゴリを選択してください
-            </p>
-          </div>
-        </>
-      ) : displayMode === DisplayMode.SKILLS && selectedCategory ? (
-        <CategorySkillsGraph 
-          category={selectedCategory} 
-          onSkillSelect={handleSkillSelect}
-        />
-      ) : displayMode === DisplayMode.FLOWCHART && graphSkill ? (
-        <SkillFlowChart 
-          skillName={graphSkill} 
-          selectedCategories={selectedCategories}
-          onSkillSelect={handleSkillSelect}
-        />
-      ) : null}
+      <VisualizationRenderer
+        displayMode={displayMode}
+        selectedCategory={selectedCategory}
+        graphSkill={graphSkill}
+        selectedCategories={selectedCategories}
+        allCategories={allCategories}
+        onCategorySelect={handleCategorySelect}
+        onSkillSelect={handleSkillSelect}
+      />
     </div>
   );
 };
