@@ -1,10 +1,4 @@
-export interface CircleLayoutOptions {
-  centerX?: number;
-  centerY?: number;
-  minRadius?: number;
-  baseRadius?: number;
-  increment?: number;
-}
+import { CircleLayoutOptions } from '@features/skillChaining/types';
 
 /**
  * 円形レイアウトを計算するユーティリティ関数

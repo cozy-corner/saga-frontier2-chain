@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import React from 'react';
 import { Node, Edge } from 'reactflow';
@@ -82,7 +82,11 @@ describe('useGraphInteractions', () => {
       // エラーを発生させるためにnullを渡す
       expect(() => {
         act(() => {
-          result.current.onNodeMouseEnter({} as React.MouseEvent, { id: null } as Node);
+          result.current.onNodeMouseEnter({} as React.MouseEvent, { 
+            id: null as unknown as string, 
+            position: { x: 0, y: 0 },
+            data: {}
+          } as Node);
         });
       }).not.toThrow();
     });
@@ -122,7 +126,7 @@ describe('useGraphInteractions', () => {
       const nodeUpdater = mockSetNodes.mock.calls[0][0];
       const updatedNodes = nodeUpdater(testNodes);
       
-      updatedNodes.forEach(node => {
+      updatedNodes.forEach((node: Node) => {
         expect(node.className).toBe('');
       });
 
@@ -131,7 +135,7 @@ describe('useGraphInteractions', () => {
       const edgeUpdater = mockSetEdges.mock.calls[0][0];
       const updatedEdges = edgeUpdater(testEdges);
       
-      updatedEdges.forEach(edge => {
+      updatedEdges.forEach((edge: Edge) => {
         expect(edge.style?.opacity).toBe(1);
         expect(edge.style?.zIndex).toBe(0);
       });

@@ -1,16 +1,11 @@
 import React, { useCallback } from 'react';
 import { useSkillStack } from '@features/skillChaining/state/SkillStackContext';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
-
-// シンプルなスキルアイテムの型定義
-interface SkillItem {
-  name: string;
-  category?: string;
-}
+import { SkillItem, OnSkillSelectCallback } from '@features/skillChaining/types';
 
 interface StackedSkillsProps {
   allSkills: SkillItem[];
-  onSkillClick?: (skillName: string, shouldAddToChain?: boolean) => void;
+  onSkillClick?: OnSkillSelectCallback;
 }
 
 export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
