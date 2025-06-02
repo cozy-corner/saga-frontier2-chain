@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGraphVisualization } from '@features/skillChaining/state/GraphVisualizationContext';
 import { useSkillStack } from '@features/skillChaining/state/SkillStackContext';
 
@@ -11,11 +11,13 @@ export function useSkillSelection(availableCategories: string[] = []) {
   const { graphSkill } = graphState;
   const { dispatch } = useSkillStack();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const isInitialized = useRef(false);
   
   // 利用可能なカテゴリが取得されたら、初期状態として全て選択する
   useEffect(() => {
-    if (availableCategories.length > 0 && selectedCategories.length === 0) {
+    if (availableCategories.length > 0 && !isInitialized.current) {
       setSelectedCategories(availableCategories);
+      isInitialized.current = true;
     }
   }, [availableCategories]);
   
