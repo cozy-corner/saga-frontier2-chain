@@ -46,9 +46,9 @@ describe('skillGraphUtils', () => {
   ];
 
   describe('filterSkillsByCategories', () => {
-    it('should return all skills when no categories are selected', () => {
+    it('should return empty array when no categories are selected', () => {
       const result = filterSkillsByCategories(mockSkills, []);
-      expect(result).toEqual(mockSkills);
+      expect(result).toEqual([]);
     });
 
     it('should filter skills by single category', () => {
