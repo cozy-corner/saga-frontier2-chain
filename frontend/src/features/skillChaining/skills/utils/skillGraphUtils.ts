@@ -16,8 +16,8 @@ export function filterSkillsByCategories(
 ): Skill[] {
   if (!skills || skills.length === 0) return [];
   
-  // カテゴリが選択されていない場合はすべてのスキルを返す
-  if (selectedCategories.length === 0) return skills;
+  // カテゴリが選択されていない場合は空配列を返す（スキルを表示しない）
+  if (selectedCategories.length === 0) return [];
   
   // 選択されたカテゴリに属するスキルのみをフィルタリング
   return skills.filter(skill => {

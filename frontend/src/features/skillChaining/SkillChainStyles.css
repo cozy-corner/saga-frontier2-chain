@@ -88,13 +88,25 @@
   color: #333;
 }
 
-.clear-all-btn {
+.category-filter-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.clear-all-btn,
+.select-all-btn {
   background: none;
   border: none;
   color: #0077cc;
   font-size: 12px;
   cursor: pointer;
   padding: 0;
+  text-decoration: underline;
+}
+
+.clear-all-btn:hover,
+.select-all-btn:hover {
+  color: #005fa3;
 }
 
 .category-checkbox-list {

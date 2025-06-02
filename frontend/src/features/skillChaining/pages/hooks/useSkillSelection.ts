@@ -1,15 +1,23 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useGraphVisualization } from '@features/skillChaining/state/GraphVisualizationContext';
 import { useSkillStack } from '@features/skillChaining/state/SkillStackContext';
 
 /**
  * スキル選択とカテゴリフィルターのロジックを管理するカスタムフック
+ * @param availableCategories - 利用可能なカテゴリのリスト
  */
-export function useSkillSelection() {
+export function useSkillSelection(availableCategories: string[] = []) {
   const { state: graphState, setGraphSkill } = useGraphVisualization();
   const { graphSkill } = graphState;
   const { dispatch } = useSkillStack();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  
+  // 利用可能なカテゴリが取得されたら、初期状態として全て選択する
+  useEffect(() => {
+    if (availableCategories.length > 0 && selectedCategories.length === 0) {
+      setSelectedCategories(availableCategories);
+    }
+  }, [availableCategories]);
   
   // スキル選択ハンドラー
   const handleSelectSkill = useCallback((skillName: string, shouldAddToChain: boolean = true) => {
