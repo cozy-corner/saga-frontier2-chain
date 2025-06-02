@@ -24,13 +24,12 @@
 - [x] other: use neo4j migration tool
 - [x] fix: sort by categories
 - [x] other: migration in workflow
-- [] feat: add cost of skill
+- [x] feat: add cost of skill
 - - [x] feat: add skill type
 - - [x] feat: add neo4j schema
 - - [x] feat: add data to skill_type
 - - [x] feat: fix repository
 - - [x] feat: sort by cost
-- - [] feat: frontend
 - [x] fix: remove linking line when check category filter
 - [x] refactor: extract logic from SkillFlowChart component
 - - [x] create useSkillGraph custom hook for data fetching and filtering
@@ -54,6 +53,8 @@
 - [] feat: show badge when selecting categories
 - [] feat: show linked name
 - [] other: deploy on google cloud
+- - [] other: deploy on cloud run
+- - [] other: deploy on neo4j serverless hosting
 - [] feat: batch special effect
 - [] feat: fix category of jutsu
 - [] other: style and design
