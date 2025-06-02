@@ -26,7 +26,7 @@ export function SkillChainVisualization() {
     setSelectedCategories,
     handleSelectSkill,
     handleRemoveCategory
-  } = useSkillSelection();
+  } = useSkillSelection(availableCategories);
   
   // ローディングまたはエラー状態の場合は専用コンポーネントを表示
   const loadingOrError = <SkillChainLoadingError isLoading={isLoading} errorMessage={errorMessage} />;

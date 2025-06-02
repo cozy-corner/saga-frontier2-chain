@@ -16,14 +16,24 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     <div className="category-filter">
       <div className="category-filter-header">
         <h4>カテゴリフィルター</h4>
-        {selectedCategories.length > 0 && (
-          <button 
-            className="clear-all-btn" 
-            onClick={() => setSelectedCategories([])}
-          >
-            すべて解除
-          </button>
-        )}
+        <div className="category-filter-actions">
+          {selectedCategories.length < categories.length && (
+            <button 
+              className="select-all-btn" 
+              onClick={() => setSelectedCategories(categories)}
+            >
+              すべて選択
+            </button>
+          )}
+          {selectedCategories.length > 0 && (
+            <button 
+              className="clear-all-btn" 
+              onClick={() => setSelectedCategories([])}
+            >
+              すべて解除
+            </button>
+          )}
+        </div>
       </div>
       <div className="category-checkbox-list">
         {categories.map(category => (
