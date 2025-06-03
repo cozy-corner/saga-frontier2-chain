@@ -9,8 +9,8 @@ describe('skillChainNameUtils', () => {
     });
 
     it('nullまたはundefinedの場合は空文字を返す', () => {
-      expect(generateChainName(null as any)).toBe('');
-      expect(generateChainName(undefined as any)).toBe('');
+      expect(generateChainName(null as unknown as Skill[])).toBe('');
+      expect(generateChainName(undefined as unknown as Skill[])).toBe('');
     });
 
     it('単体スキルの場合はそのままスキル名を返す', () => {
@@ -190,8 +190,8 @@ describe('skillChainNameUtils', () => {
     });
 
     it('nullまたはundefinedの場合はfalseを返す', () => {
-      expect(allHaveChainNameData(null as any)).toBe(false);
-      expect(allHaveChainNameData(undefined as any)).toBe(false);
+      expect(allHaveChainNameData(null as unknown as Skill[])).toBe(false);
+      expect(allHaveChainNameData(undefined as unknown as Skill[])).toBe(false);
     });
   });
 });
