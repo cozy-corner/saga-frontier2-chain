@@ -5,6 +5,8 @@ export interface Skill {
   name: string;
   category?: CategoryType;
   linksTo: SkillType[];
+  nonFinalName?: string; // Name used at beginning/middle of chain
+  finalName?: string; // Name used at end of chain
 }
 
 /**

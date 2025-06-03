@@ -52,7 +52,7 @@
 - [x] feat: default category filter
 - [] feat: show linked name
 - - [x] feat: set up data
-- - [] feat: backend
+- - [x] feat: backend
 - - [] feat: frontend
 - [] feat: show badge when selecting categories
 - [] other: deploy on google cloud

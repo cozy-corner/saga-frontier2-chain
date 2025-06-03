@@ -25,6 +25,8 @@ export const typeDefs = gql`
     category: Category # Category this skill belongs to (optional as query might not fetch it)
     linksTo: [Skill!]! # Skills this skill can link to
     linkedBy: [Skill!]! # Skills that can link to this skill
+    nonFinalName: String # Name used at beginning/middle of chain
+    finalName: String # Name used at end of chain
     # linkedCategories: [Category!]! # Categories of skills this skill can link to (distinct) - Derived via query
   }
 
