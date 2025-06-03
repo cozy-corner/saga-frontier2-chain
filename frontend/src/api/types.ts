@@ -11,6 +11,8 @@ export interface Skill {
   category?: Category;
   linksTo?: Skill[];
   linkedBy?: Skill[];
+  nonFinalName?: string; // Name used at beginning/middle of chain
+  finalName?: string; // Name used at end of chain
 }
 
 // Query result types

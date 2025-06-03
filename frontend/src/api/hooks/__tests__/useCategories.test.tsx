@@ -7,11 +7,11 @@ import { useCategories } from '../useCategories';
 describe('useCategories', () => {
   // テスト用のカテゴリデータ
   const TEST_CATEGORIES = [
-    { name: '体' },
-    { name: '剣' },
-    { name: '斧' },
-    { name: '杖' },
-    { name: '槍' }
+    { name: '体', order: 1 },
+    { name: '剣', order: 3 },
+    { name: '斧', order: 5 },
+    { name: '杖', order: 6 },
+    { name: '槍', order: 7 }
   ];
 
   // 成功時のモックレスポンス
