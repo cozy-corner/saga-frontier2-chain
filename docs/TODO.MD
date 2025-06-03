@@ -50,11 +50,11 @@
 - - [x] update README with architecture patterns
 - [x] fix: batch number are too large
 - [x] feat: default category filter
-- [] feat: show linked name
+- [x] feat: show linked name
 - - [x] feat: set up data
 - - [x] feat: backend
 - - [x] feat: frontend query
-- - [] feat: frontend ui
+- - [x] feat: frontend ui
 - [] feat: show badge when selecting categories
 - [] other: deploy on google cloud
 - - [] other: deploy on cloud run

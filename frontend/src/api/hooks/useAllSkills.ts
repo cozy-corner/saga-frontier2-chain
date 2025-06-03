@@ -8,6 +8,8 @@ export interface SkillWithCategory {
   name: string;
   category?: string;
   categoryOrder?: number;
+  nonFinalName?: string;
+  finalName?: string;
 }
 
 export function useAllSkills() {
@@ -52,7 +54,9 @@ export function useAllSkills() {
             const formattedSkills = result.value.data.category.skills.map(skill => ({
               name: skill.name,
               category: category.name,
-              categoryOrder: categoryOrder
+              categoryOrder: categoryOrder,
+              nonFinalName: skill.nonFinalName,
+              finalName: skill.finalName
             }));
             
             allSkillsList.push(...formattedSkills);

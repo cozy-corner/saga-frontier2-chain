@@ -2,9 +2,11 @@ import React, { useCallback } from 'react';
 import { useSkillStack } from '@features/skillChaining/state/SkillStackContext';
 import { getCategoryColor } from '@features/skillChaining/categories/hooks/categoryColors';
 import { SkillItem, OnSkillSelectCallback } from '@features/skillChaining/types';
+import { generateChainName } from '../utils/skillChainNameUtils';
+import { Skill } from '@api/types';
 
 interface StackedSkillsProps {
-  allSkills: SkillItem[];
+  allSkills: (SkillItem & Partial<Skill>)[];
   onSkillClick?: OnSkillSelectCallback;
 }
 
@@ -12,7 +14,7 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
   const { state: { selectedSkills }, dispatch } = useSkillStack();
   
   // 選択されたスキルの詳細情報を取得
-  const selectedSkillDetails: SkillItem[] = selectedSkills.map(skillName => {
+  const selectedSkillDetails: (SkillItem & Partial<Skill>)[] = selectedSkills.map(skillName => {
     const foundSkill = allSkills.find(skill => skill.name === skillName);
     if (foundSkill) {
       return foundSkill;
@@ -23,6 +25,9 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
       category: 'default'
     };
   });
+  
+  // 連携名を生成
+  const chainName = generateChainName(selectedSkillDetails as Skill[]);
   
   // スキルクリックハンドラー - useCallbackでメモ化して不要な再作成を防止
   const handleSkillClick = useCallback((skillName: string, index: number) => {
@@ -42,7 +47,7 @@ export function StackedSkills({ allSkills, onSkillClick }: StackedSkillsProps) {
   
   return (
     <div className="stacked-skills-container">
-      <h3>連携</h3>
+      <h3>連携{chainName && `: ${chainName}`}</h3>
       <div className="stacked-skills-list">
         {selectedSkillDetails.map((skill: SkillItem, index) => {
           // カテゴリ名を取得（文字列または未定義の場合はデフォルト値を使用）
