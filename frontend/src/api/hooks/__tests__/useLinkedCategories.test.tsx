@@ -8,8 +8,8 @@ describe('useLinkedCategories', () => {
   // テスト用のスキルとリンクカテゴリデータ
   const TEST_SKILL_NAME = '裏拳';
   const TEST_LINKED_CATEGORIES = [
-    { name: '体' },
-    { name: '剣' }
+    { name: '体', order: 1 },
+    { name: '剣', order: 3 }
   ];
 
   // 成功時のモックレスポンス
@@ -20,7 +20,11 @@ describe('useLinkedCategories', () => {
     },
     result: {
       data: {
-        skill: { name: TEST_SKILL_NAME },
+        skill: { 
+          name: TEST_SKILL_NAME,
+          nonFinalName: '裏',
+          finalName: '裏拳'
+        },
         linkedFromCategories: TEST_LINKED_CATEGORIES
       }
     }
