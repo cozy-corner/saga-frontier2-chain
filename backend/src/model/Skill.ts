@@ -9,16 +9,22 @@ export class Skill implements Waza {
   linksTo: SkillType[];
   type: 'waza' = 'waza' as const;
   wp: number;
+  nonFinalName?: string; // Name used at beginning/middle of chain
+  finalName?: string; // Name used at end of chain
 
   constructor(
     name: string, 
     category?: CategoryType, 
     linksTo: SkillType[] = [],
-    wp: number = 0 // デフォルト値
+    wp: number = 0, // デフォルト値
+    nonFinalName?: string,
+    finalName?: string
   ) {
     this.name = name;
     this.category = category;
     this.linksTo = linksTo;
     this.wp = wp;
+    this.nonFinalName = nonFinalName;
+    this.finalName = finalName;
   }
 }

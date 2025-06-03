@@ -68,12 +68,16 @@ const toSkillType = (data: Record<string, unknown> | null): SkillType | null => 
   
   const name = data.name as string;
   const type = data.type as 'waza' | 'jutsuwaza' | 'jutsu' || 'waza';
+  const nonFinalName = data.nonFinalName as string | undefined;
+  const finalName = data.finalName as string | undefined;
   
   if (type === 'waza') {
     return {
       type: 'waza',
       name: name,
       wp: typeof data.wp === 'number' ? data.wp as number : 0,
+      nonFinalName: nonFinalName,
+      finalName: finalName,
       linksTo: [] // NOTE: Empty array is intentional. LinkTo relationships are loaded on-demand
                // by the GraphQL resolver in schema.ts (Skill.linksTo resolver) rather than eagerly loaded here.
     };
@@ -82,6 +86,8 @@ const toSkillType = (data: Record<string, unknown> | null): SkillType | null => 
       type: 'jutsuwaza',
       name: name,
       jp: typeof data.jp === 'number' ? data.jp as number : 0,
+      nonFinalName: nonFinalName,
+      finalName: finalName,
       linksTo: []
     };
   } else { // jutsu
@@ -89,6 +95,8 @@ const toSkillType = (data: Record<string, unknown> | null): SkillType | null => 
       type: 'jutsu',
       name: name,
       jp: typeof data.jp === 'number' ? data.jp as number : 0,
+      nonFinalName: nonFinalName,
+      finalName: finalName,
       linksTo: []
     };
   }
