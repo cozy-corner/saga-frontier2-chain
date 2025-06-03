@@ -53,7 +53,8 @@
 - [] feat: show linked name
 - - [x] feat: set up data
 - - [x] feat: backend
-- - [] feat: frontend
+- - [x] feat: frontend query
+- - [] feat: frontend ui
 - [] feat: show badge when selecting categories
 - [] other: deploy on google cloud
 - - [] other: deploy on cloud run
