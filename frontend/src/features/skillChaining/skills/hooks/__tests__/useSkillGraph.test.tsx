@@ -17,13 +17,32 @@ describe('useSkillGraph', () => {
   const mockLinkedSkills = [
     {
       name: '胴抜き',
+      nonFinalName: '胴',
+      finalName: '抜き',
       category: { name: '体', order: 1 },
-      linksTo: [{ name: '熊掌打' }],
+      linksTo: [{ 
+        name: '熊掌打',
+        nonFinalName: '熊',
+        finalName: '掌打'
+      }],
     },
     {
       name: '切り返し',
+      nonFinalName: '返し',
+      finalName: '返し',
       category: { name: '剣', order: 3 },
-      linksTo: [{ name: '十字切り' }, { name: '大木断' }],
+      linksTo: [
+        { 
+          name: '十字切り',
+          nonFinalName: '十字',
+          finalName: '切り'
+        }, 
+        { 
+          name: '大木断',
+          nonFinalName: '大木',
+          finalName: '断'
+        }
+      ],
     },
   ];
 
