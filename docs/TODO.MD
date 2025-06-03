@@ -55,13 +55,13 @@
 - - [x] feat: backend
 - - [x] feat: frontend query
 - - [x] feat: frontend ui
-- [] feat: show badge when selecting categories
+- [] other: font
+- [] other: style and design
 - [] other: deploy on google cloud
 - - [] other: deploy on cloud run
 - - [] other: deploy on neo4j serverless hosting
 - [] feat: batch special effect
+- [] other: use skill icon
 - [] feat: fix category of jutsu
-- [] other: style and design
-- [] other: font
 - [] feat: reverse search
 - [] feat: save linkage
